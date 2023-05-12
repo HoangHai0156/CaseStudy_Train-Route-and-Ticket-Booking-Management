@@ -1,0 +1,17 @@
+routes
+id,	id tàu,	khởi hành time,	thời gian chạy(H),	loại chuyến đi,	Đ xuất phát,	Đ kết thúc,	Giá
+
+train
+ID,	Tên tàu,	Hãng tàu,	số toa
+
+car
+ID,	ID tàu,	số ghế
+
+seat
+id ghế,	id chuyen di,	id tàu,	id toa,	trạng thái trống
+
+customer
+ID KH,	Tên KH,	Loại khách hàng
+
+ticket
+ID vé,	ID ghế,	ID Khách hàng,	Giá (giá vé chuyến đi + giá giảm loại KH),	trạng thái thanh toán
