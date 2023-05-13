@@ -20,4 +20,20 @@ public class ActionUtils {
         }while (checkInvalid);
         return action;
     }
+    public static double doubleHandleInput(String inputName){
+        double value = -1;
+        boolean checkInvalid;
+
+        do {
+            checkInvalid = false;
+            try {
+                System.out.println("Chọn "+inputName+" thích hợp: ");
+                value = Double.parseDouble(scanner.nextLine());
+            }catch (NumberFormatException numberFormatException){
+                System.out.println("Giá trị nhập vào không hợp lệ. Vui lòng nhập lại");
+                checkInvalid = true;
+            }
+        }while (checkInvalid);
+        return value;
+    }
 }

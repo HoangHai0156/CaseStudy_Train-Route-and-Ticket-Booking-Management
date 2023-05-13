@@ -15,3 +15,8 @@ ID KH,	Tên KH,	Loại khách hàng
 
 ticket
 ID vé,	ID ghế,	ID Khách hàng,	Giá (giá vé chuyến đi + giá giảm loại KH),	trạng thái thanh toán
+
+TIME NOTE:
+    HUE - SG : 20h
+    HUE - HN : 13h
+    SG - HN  : 32h

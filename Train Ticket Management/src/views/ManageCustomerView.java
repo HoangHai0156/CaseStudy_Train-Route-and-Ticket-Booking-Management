@@ -15,7 +15,7 @@ public class ManageCustomerView {
             int manageCustomerAction;
             do {
                 System.out.println("╔═════════════════════════════════════════════════════╗");
-                System.out.println("║              THICK MENU - Quản lý                   ║");
+                System.out.println("║              THICK MENU - Quản lý khách hàng        ║");
                 System.out.println("╠═════════════════════════════════════════════════════╣");
                 System.out.println("║ Options:                                            ║");
                 System.out.println("║ ▶ 01. Hiển thị danh sách KH                         ║");
