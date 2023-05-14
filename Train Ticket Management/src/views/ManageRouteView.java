@@ -1,11 +1,9 @@
 package views;
 
+import model.EStation;
 import model.Route;
 import service.RouteService;
-import utils.ActionUtils;
-import utils.DateUtils;
-import utils.FileUtils;
-import utils.PaintUtils;
+import utils.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -51,13 +49,41 @@ public class ManageRouteView {
                 case 2:
                     editRouteView();
                     break;
+                case 3:
+                    removeRouteView();
+                    break;
+                case 4:
+                    addRouteView();
+                    break;
                 case 5:
                     findRouteView();
+                    break;
+                case 6:
+                    sortRouteView();
+                    break;
                 case 0:
                     continueCheck = false;
                     break;
             }
         }while (continueCheck);
+    }
+
+    private void addRouteView() {
+        System.out.println("Thêm chuyến mới...");
+        Route newRoute = routeService.createRoute();
+
+        routeList.add(newRoute);
+        FileUtils.writeDataToFile(routeList, routeFilePath);
+        // TODO: 14/5/2023 cập nhật lại danh sách ghế ngồi
+    }
+
+    private void removeRouteView() {
+        Route route = searchRouteById();
+        routeService.showSingleRoute(route);
+        
+        routeService.removeRouteById(route);
+        FileUtils.writeDataToFile(routeList, routeFilePath);
+        // TODO: 14/5/2023 cập nhật lại danh sách ghế ngồi
     }
 
     private void editRouteView() {
@@ -85,27 +111,30 @@ public class ManageRouteView {
 
                 editRouteAction = ActionUtils.intHandleInput("option");
             }while (editRouteAction < 0 || editRouteAction > 6);
-            switch (editRouteAction){
-                case 1:
+            switch (editRouteAction) {
+                case 1 -> {
                     manageTrainView.showListTrain(manageTrainView.getTrainList());
                     routeService.editRouteTrainId(route);
-                    FileUtils.writeDataToFile(routeList,routeFilePath);
-                    // TODO: 13/5/2023 cập nhật lại danh sách ghế ngồi
-                    break;
-                case 2:
+                    FileUtils.writeDataToFile(routeList, routeFilePath);
+                }
+                // TODO: 13/5/2023 cập nhật lại danh sách ghế ngồi
+                case 2 -> {
                     routeService.editDepartTimeRoute(route);
-                    FileUtils.writeDataToFile(routeList,routeFilePath);
-                    break;
-                case 3:
-
-                    break;
-                case 5:
+                    FileUtils.writeDataToFile(routeList, routeFilePath);
+                }
+                case 3 -> {
+                    routeService.editFromStation(route);
+                    FileUtils.writeDataToFile(routeList, routeFilePath);
+                }
+                case 4 -> {
+                    routeService.editDestinationStation(route);
+                    FileUtils.writeDataToFile(routeList, routeFilePath);
+                }
+                case 5 -> {
                     routeService.editRoutePrice(route);
-                    FileUtils.writeDataToFile(routeList,routeFilePath);
-                    break;
-                case 0:
-                    continueCheck = false;
-                    break;
+                    FileUtils.writeDataToFile(routeList, routeFilePath);
+                }
+                case 0 -> continueCheck = false;
             }
         }while (continueCheck);
     }
@@ -129,19 +158,62 @@ public class ManageRouteView {
 
                 findRouteAction = ActionUtils.intHandleInput("option");
             }while (findRouteAction < 0 || findRouteAction > 4);
-            switch (findRouteAction){
-                case 1:
+            switch (findRouteAction) {
+                case 1 -> {
                     Route route = searchRouteById();
                     routeService.showSingleRoute(route);
-                    break;
-                case 2:
-//                    searchRouteByDepartDate();
-                    break;
-                case 0:
-                    continueCheck = false;
-                    break;
+                }
+                case 2 -> searchRouteByDepartDate();
+                case 3 -> searchRouteByFromStation();
+                case 4 -> searchRouteByDesStation();
+                case 0 -> continueCheck = false;
             }
         }while (continueCheck);
+    }
+
+    private void searchRouteByDesStation() {
+        System.out.println("Tìm kiếm chuyến đi theo điểm kết thúc");
+        EStation.showStationList();
+        System.out.println("Nhập vào ký hiệu của trạm (HUE-SG-HN) để tìm kiếm: ");
+        String keyFrom = scanner.nextLine();
+
+        List<Route> serachedRouteList = routeService.getRoutesByDesStation(keyFrom);
+        if (serachedRouteList.isEmpty()){
+            System.out.println("Không tìm thấy điểm kết thúc thích hợp");
+        }else showRouteList(serachedRouteList);
+    }
+
+    private void searchRouteByFromStation() {
+        System.out.println("Tìm kiếm chuyến đi theo điểm xuất phát");
+        EStation.showStationList();
+        System.out.println("Nhập vào ký hiệu của trạm (HUE-SG-HN) để tìm kiếm: ");
+        String keyFrom = scanner.nextLine();
+
+        List<Route> serachedRouteList = routeService.getRoutesByFromStation(keyFrom);
+        if (serachedRouteList.isEmpty()){
+            System.out.println("Không tìm thấy điểm khởi hành thích hợp");
+        }else showRouteList(serachedRouteList);
+    }
+
+    private void searchRouteByDepartDate() {
+        System.out.println("Tìm kiếm chuyến đi theo ngày...");
+        String keyDate;
+        boolean isInvalidKeyDate;
+
+        do {
+            isInvalidKeyDate = false;
+            System.out.println("Nhập vào ngày khởi hành theo định dạng dd/MM/yyyy");
+            keyDate = scanner.nextLine();
+            if (!ValidateUtils.dateValidate(keyDate)){
+                System.out.println("Thời gian nhập vào chưa đúng định dạng. Xin nhập lại");
+                isInvalidKeyDate = true;
+            }
+        }while (isInvalidKeyDate);
+
+        List<Route> serachedRouteList = routeService.getRoutesByDepartDate(keyDate);
+        if (serachedRouteList.isEmpty()){
+            System.out.println("Không tìm thấy chuyến cho ngày "+keyDate);
+        }else showRouteList(serachedRouteList);
     }
 
     private Route searchRouteById() {

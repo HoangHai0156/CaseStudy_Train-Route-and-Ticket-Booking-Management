@@ -33,5 +33,29 @@ public enum EStation {
         }
         return null;
     }
-
+    public static EStation getEStationById(int id){
+        for (EStation eStation : EStation.values()){
+            if (eStation.getId() == id){
+                return eStation;
+            }
+        }
+        return null;
+    }
+    public static void showStationList(){
+        System.out.println("Danh sách địa điểm");
+        System.out.printf("%-15s %-15s %-15s\n","ID địa điểm","Ký hiệu","Tên");
+        for (EStation eStation : EStation.values()){
+            System.out.printf("%-15s %-15s %-15s\n",eStation.getId(),eStation.name(),eStation.getName());
+        }
+    }
+    public static void showTheRestStations(EStation eStation1){
+        System.out.println("Danh sách địa điểm");
+        System.out.printf("%-15s %-15s %-15s\n","ID địa điểm","Ký hiệu","Tên");
+        for (EStation eStation : EStation.values()){
+            if (eStation1.name().equals(eStation.name())){
+                continue;
+            }
+            System.out.printf("%-15s %-15s %-15s\n",eStation.getId(),eStation.name(),eStation.getName());
+        }
+    }
 }

@@ -1,7 +1,7 @@
 package model;
 
 public enum ERouteType {
-    NORMAL(1,"Thường"),BOTH(2,"Khứ hồi");
+    NORMAL(1,"Thường");
     private int id;
     private String name;
 

@@ -1,5 +1,7 @@
 package service;
 
+import Comparator.RouteComparator;
+import model.ERouteType;
 import model.EStation;
 import model.Route;
 import utils.*;
@@ -48,7 +50,7 @@ public class RouteService {
                 route.getFrom().getName(), route.getDestination().getName(), route.getPrice());
     }
 
-    public int getIndexByID(int id) {
+    public int getRouteIndexByID(int id) {
         for (int i = 0; i < routeList.size(); i++) {
             if (routeList.get(i).getRouteId() == id) {
                 return i;
@@ -58,22 +60,27 @@ public class RouteService {
     }
 
     public void editRoutePrice(Route route) {
+        double price = getInputPrice();
+
+        int index = getRouteIndexByID(route.getRouteId());
+        route.setPrice(price);
+        routeList.set(index, route);
+    }
+
+    public double getInputPrice() {
         double price;
         boolean check;
 
         do {
             check = false;
-            System.out.println("Nhập giá mới cho chuyến đi");
+            System.out.println("Nhập giá cho chuyến đi");
             price = ActionUtils.doubleHandleInput("giá");
             if (price < 0) {
                 System.out.println("Giá không thể để giá trị âm. Vui lòng nhập lại");
                 check = true;
             }
         } while (check);
-
-        int index = getIndexByID(route.getRouteId());
-        route.setPrice(price);
-        routeList.set(index, route);
+        return price;
     }
 
     public void editRouteTrainId(Route route) {
@@ -82,24 +89,107 @@ public class RouteService {
 
         do {
             check = false;
-            System.out.println("Nhập id tàu mới cho chuyến đi");
-            id = ActionUtils.intHandleInput("id");
-            if (!trainService.isTrainIdExist(id)) {
-                System.out.println("Không tìm thấy ID tàu. Vui lòng nhập lại");
-                check = true;
-                continue;
-            }
-            check = checkConflictDepartDate(route.getDepartTime(), route.getRunTime(), id,route.getRouteId(),route.getFrom(),route.getDestination());
+            System.out.println("Nhập id tàu mới");
+            id = getInputTrainId();
+            check = checkConflictDepartDate(route.getDepartTime(), id,route.getRouteId(),route.getFrom(),route.getDestination());
         } while (check);
 
-        int index = getIndexByID(route.getRouteId());
+        int index = getRouteIndexByID(route.getRouteId());
         route.setTrainId(id);
         routeList.set(index, route);
     }
-    public void editFromStation(Route route){
-        System.out.println("Sửa điểm khởi hành");
-        System.out.println("Chọn điểm khởi hành thích hợp");
+    public int getInputTrainId(){
+        int trainId;
+        boolean check;
 
+        do {
+            check = false;
+            System.out.println("Nhập id tàu cho chuyến đi");
+            trainId = ActionUtils.intHandleInput("id");
+            if (!trainService.isTrainIdExist(trainId)) {
+                System.out.println("Không tìm thấy ID tàu. Vui lòng nhập lại");
+                check = true;
+            }
+        } while (check);
+        return trainId;
+    }
+    public void editFromStation(Route route){
+        int stationId;
+        EStation eStation;
+        boolean isInvalidStation;
+
+        System.out.println("Sửa điểm khởi hành");
+        EStation.showStationList();
+        do {
+            isInvalidStation = false;
+            System.out.println("Chọn điểm khởi hành thích hợp theo ID");
+            stationId = Integer.parseInt(scanner.nextLine());
+            eStation = EStation.getEStationById(stationId);
+            if (eStation == null || eStation.name().equals(route.getDestination().name())){
+                System.out.println("Điểm khởi hành không tồn tại hoặc trùng với địa điểm kết thúc. Xin nhập lại");
+                isInvalidStation = true;
+                continue;
+            }
+            isInvalidStation = checkConflictDepartDate(route.getDepartTime(),
+                    route.getTrainId(), route.getRouteId(),eStation,route.getDestination());
+        }while (isInvalidStation);
+
+        int index = getRouteIndexByID(route.getRouteId());
+        route.setFrom(eStation);
+        routeList.set(index, route);
+    }
+    public EStation getInputStation(){
+        int stationId;
+        EStation fromStation;
+        boolean isInvalidStation;
+
+        do {
+            isInvalidStation = false;
+            System.out.println("Chọn trạm thích hợp theo ID");
+            stationId = Integer.parseInt(scanner.nextLine());
+            fromStation = EStation.getEStationById(stationId);
+
+            if (fromStation == null){
+                System.out.println("Trạm không tồn tại. Xin nhập lại");
+                isInvalidStation = true;
+            }
+
+        }while (isInvalidStation);
+        return fromStation;
+    }
+
+    private static boolean isStationsConflict(EStation from, EStation destination) {
+        if (from.name().equals(destination.name())){
+            System.out.println("Điểm khởi hành trùng với địa điểm kết thúc. Xin nhập lại");
+            return true;
+        }
+        return false;
+    }
+
+    public void editDestinationStation(Route route){
+        int stationId;
+        EStation eStation;
+        boolean isInvalidStation;
+
+        System.out.println("Sửa điểm kết thúc");
+        EStation.showStationList();
+        do {
+            isInvalidStation = false;
+            System.out.println("Chọn điểm kết thúc thích hợp theo ID");
+            stationId = Integer.parseInt(scanner.nextLine());
+            eStation = EStation.getEStationById(stationId);
+            if (eStation == null || eStation.name().equals(route.getFrom().name())){
+                System.out.println("Điểm khởi hành không tồn tại hoặc trùng với địa điểm xuất phát. Xin nhập lại");
+                isInvalidStation = true;
+                continue;
+            }
+            isInvalidStation = checkConflictDepartDate(route.getDepartTime(),
+                    route.getTrainId(), route.getRouteId(),route.getFrom(),eStation);
+        }while (isInvalidStation);
+
+        int index = getRouteIndexByID(route.getRouteId());
+        route.setDestination(eStation);
+        routeList.set(index, route);
     }
 
     public List<Route> getRoutesByDepartDate(String dateString) {
@@ -110,6 +200,24 @@ public class RouteService {
             }
         }
         return routeListByDepartDate;
+    }
+    public List<Route> getRoutesByFromStation(String station){
+        List<Route> routeListByFromStation = new ArrayList<>();
+        for (Route route: routeList){
+            if (route.getFrom().name().equalsIgnoreCase(station)){
+                routeListByFromStation.add(route);
+            }
+        }
+        return routeListByFromStation;
+    }
+    public List<Route> getRoutesByDesStation(String station){
+        List<Route> routeListByDesStation = new ArrayList<>();
+        for (Route route: routeList){
+            if (route.getDestination().name().equalsIgnoreCase(station)){
+                routeListByDesStation.add(route);
+            }
+        }
+        return routeListByDesStation;
     }
 
     public List<Route> getRoutesByTrainId(int trainId, List<Route> routeList) {
@@ -138,12 +246,12 @@ public class RouteService {
             System.out.println("Sửa thời gian khởi hành");
             newDepartDate = getInputDate();
 
-            isConflictDate = checkConflictDepartDate(newDepartDate, route.getRunTime(), route.getTrainId(), route.getRouteId(),
+            isConflictDate = checkConflictDepartDate(newDepartDate, route.getTrainId(), route.getRouteId(),
                     route.getFrom(),route.getDestination());
 
         } while (isConflictDate);
 
-        int index = getIndexByID(route.getRouteId());
+        int index = getRouteIndexByID(route.getRouteId());
         route.setDepartTime(newDepartDate);
         routeList.set(index, route);
     }
@@ -164,7 +272,8 @@ public class RouteService {
         return DateUtils.parse(newDateStr);
     }
 
-    public boolean checkConflictDepartDate(Date departDate,double runTime, int trainID, int routeId,EStation from, EStation destination) {
+    public boolean checkConflictDepartDate(Date departDate, int trainID, int routeId,EStation from, EStation destination) {
+        double runTime = getRuntime(from,destination);
         Date newArriveDate = DateUtils.plusHour(departDate, runTime);
         List<Route> routeListByTrainId = getRoutesByTrainId(trainID, routeList);
         List<Route> routeListByTrainIdExceptThis = getRouteListExceptThis(routeId, routeListByTrainId);
@@ -178,7 +287,7 @@ public class RouteService {
             } else {
                 Date nextRouteDepartDate = nextRoute.getDepartTime();
                 double runTimeDestToNextRoute = getRuntime(destination, nextRoute.getFrom());
-                if (DateUtils.plusHour(nextRouteDepartDate, runTimeDestToNextRoute).getTime() < newArriveDate.getTime()) {
+                if (DateUtils.plusHour(newArriveDate, runTimeDestToNextRoute).getTime() > nextRouteDepartDate.getTime()) {
                     System.out.println("Thời gian khởi hành bị mâu thuẫn với thời gian chạy các chuyến khác của tàu. Xin hãy nhập lại");
                     return true;
                 }
@@ -197,7 +306,7 @@ public class RouteService {
                 Date nextRouteDepartDate = nextRoute.getDepartTime();
                 double runTimeDestToNextRoute = getRuntime(destination, nextRoute.getFrom());
                 if (DateUtils.plusHour(previousRouteAriveDate, runTimePreviousToThis).getTime() > departDate.getTime() ||
-                        DateUtils.plusHour(nextRouteDepartDate, runTimeDestToNextRoute).getTime() < newArriveDate.getTime()) {
+                        DateUtils.plusHour(newArriveDate, runTimeDestToNextRoute).getTime() > nextRouteDepartDate.getTime()) {
                     System.out.println("Thời gian khởi hành bị mâu thuẫn với thời gian chạy các chuyến khác của tàu. Xin hãy nhập lại");
                     return true;
                 }
@@ -264,8 +373,47 @@ public class RouteService {
         }
         return list;
     }
-    public void showRestStation(EStation exceptionStation){
+    public void removeRouteById(Route route){
+        int index = getRouteIndexByID(route.getRouteId());
+        routeList.remove(index);
+    }
+    public int getNewId(){
+        int maxId = 0;
+        for (Route route : routeList){
+            if (route.getRouteId() > maxId){
+                maxId = route.getRouteId();
+            }
+        }
+        return maxId+1;
+    }
+    public Route createRoute(){
+        int routeId = getNewId();
+        EStation fromStation;
+        EStation destStation;
+        Date departDate;
 
+        System.out.println("Chọn ID tàu");
+        manageTrainView.showListTrain(manageTrainView.getTrainList());
+        int trainId = getInputTrainId();
+
+        do {
+            System.out.println("Chọn điểm xuất phát và kết thúc");
+            EStation.showStationList();
+            System.out.println("Chọn điểm xuất phát bằng id trạm");
+            fromStation = getInputStation();
+            System.out.println("Chọn điểm kết thúc bằng id trạm");
+            destStation = getInputStation();
+        }while (isStationsConflict(fromStation,destStation));
+
+        ERouteType eRouteType = ERouteType.NORMAL;
+
+        do {
+            departDate = getInputDate();
+        }while (checkConflictDepartDate(departDate,trainId,routeId,fromStation,destStation));
+
+        double price = getInputPrice();
+
+        return new Route(routeId,trainId,departDate,getRuntime(fromStation,destStation),eRouteType,fromStation,destStation,price);
     }
 
 }

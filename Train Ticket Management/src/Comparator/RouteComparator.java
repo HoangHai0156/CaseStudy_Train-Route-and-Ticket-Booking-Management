@@ -1,4 +1,4 @@
-package utils;
+package Comparator;
 
 import model.Route;
 
