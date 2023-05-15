@@ -1,9 +1,12 @@
 package views;
 
+import model.ETrainProvider;
+import model.Route;
 import model.Train;
 import service.RouteService;
 import service.TrainService;
 import utils.ActionUtils;
+import utils.DateUtils;
 import utils.FileUtils;
 import utils.PaintUtils;
 
@@ -18,13 +21,18 @@ public class ManageTrainView {
     private static RouteService routeService;
     private static ManageRouteView manageRouteView;
     private static List<Train> trainList;
-    public List<Train> getTrainList(){
-        return FileUtils.readDataFromFile(Train.class,trainFilePath);
+
+    public List<Train> getTrainList() {
+        trainList = FileUtils.readDataFromFile(Train.class, trainFilePath);
+        return trainList;
     }
-    public ManageTrainView(){
-        trainList = FileUtils.readDataFromFile(Train.class,trainFilePath);
+
+    public ManageTrainView() {
+        trainList = FileUtils.readDataFromFile(Train.class, trainFilePath);
     }
-    public void launcher(){
+
+    public void launcher() {
+        trainList = FileUtils.readDataFromFile(Train.class, trainFilePath);
         manageRouteView = new ManageRouteView();
         routeService = new RouteService(manageRouteView.getRouteList());
         trainService = new TrainService(trainList);
@@ -42,12 +50,14 @@ public class ManageTrainView {
                 System.out.println("║ ▶ 02. Thêm tàu                                      ║");
                 System.out.println("║ ▶ 03. Sửa thông tin tàu                             ║");
                 System.out.println("║ ▶ 04. Xóa tàu                                       ║");
-                System.out.println("║"+ PaintUtils.setRed(" ▶ 0. Quit")+"                                           ║");
+                System.out.println("║ ▶ 05. Tìm kiếm tàu                                  ║");
+                System.out.println("║ ▶ 06. Sắp xếp tàu                                   ║");
+                System.out.println("║" + PaintUtils.setRed(" ▶ 0. Quit") + "                                           ║");
                 System.out.println("╚═════════════════════════════════════════════════════╝");
 
                 manageTrainAction = ActionUtils.intHandleInput("option");
-            }while (manageTrainAction < 0 || manageTrainAction > 4);
-            switch (manageTrainAction){
+            } while (manageTrainAction < 0 || manageTrainAction > 6);
+            switch (manageTrainAction) {
                 case 1:
                     showListTrain(trainList);
                     break;
@@ -60,18 +70,91 @@ public class ManageTrainView {
                 case 4:
                     removeTrainView();
                     break;
+                case 5:
+                    findTrainView();
+                    break;
                 case 0:
                     continueCheck = false;
                     break;
             }
+        } while (continueCheck);
+    }
+
+    private void findTrainView() {
+        boolean continueCheck = true;
+
+        do {
+            int findTrainAction;
+            do {
+                System.out.println("╔═════════════════════════════════════════════════════╗");
+                System.out.println("║              THICK MENU - Tìm kiếm                  ║");
+                System.out.println("╠═════════════════════════════════════════════════════╣");
+                System.out.println("║ Options:                                            ║");
+                System.out.println("║ ▶ 01. Tìm kiếm tàu theo ID                          ║");
+                System.out.println("║ ▶ 02. Tìm kiếm tàu theo số hiệu                     ║");
+                System.out.println("║ ▶ 03. Tìm kiếm tàu theo nhà cung cấp                ║");
+                System.out.println("║ ▶ 04. Tìm kiếm tàu theo số toa                      ║");
+                System.out.println("║"+ PaintUtils.setRed(" ▶ 0. Quit")+"                                           ║");
+                System.out.println("╚═════════════════════════════════════════════════════╝");
+
+                findTrainAction = ActionUtils.intHandleInput("option");
+            }while (findTrainAction < 0 || findTrainAction > 4);
+            switch (findTrainAction) {
+                case 1 -> {
+                    Train train = trainService.getTrainByTrainId();
+                    showSingleTrain(train);
+                }
+                case 2 -> searchTrainByTrainNumber();
+                case 3 -> searchTrainByTrainProvider();
+                case 4 -> searchTrainByCarQuanity();
+                case 0 -> continueCheck = false;
+            }
         }while (continueCheck);
+    }
+
+    private void searchTrainByCarQuanity() {
+        int searchCarQuanity = trainService.getInputCarQuanity();
+        List<Train> searchedTrains = trainService.getTrainsByCarQuanity(searchCarQuanity);
+        if (searchedTrains.isEmpty()){
+            System.out.println("Số lượng toa không tồn tại");
+        }else showListTrain(searchedTrains);
+    }
+
+    private void searchTrainByTrainProvider() {
+        ETrainProvider searchTrainProvider = trainService.getInputTrainProvider();
+        List<Train> searchedTrains = trainService.getTrainsByTrainProvier(searchTrainProvider.name());
+        if (searchedTrains.isEmpty()){
+            System.out.println("Hãng cung cấp không tồn tại");
+        }else showListTrain(searchedTrains);
+    }
+
+    private void searchTrainByTrainNumber() {
+        String searchTrainNumber = trainService.getInputTrainNumber();
+        List<Train> searchedTrains = trainService.getTrainsByTrainNumber(searchTrainNumber);
+        if (searchedTrains.isEmpty()){
+            System.out.println("Số hiệu không tồn tại");
+        }else showListTrain(searchedTrains);
+    }
+
+    private void showSingleTrain(Train train) {
+        System.out.printf("%-15s %-15s %-35s %-10s\n", "ID Tàu", "Số hiệu", "Nhà cung cấp", "Số toa");
+            System.out.printf("%-15s %-15s %-35s %-10s\n", train.getTrainId(),
+                    train.getTrainNumber(), train.getProvider().getFullName(), train.getCarQuanity());
     }
 
     private void removeTrainView() {
         System.out.println(PaintUtils.setBlue("Xóa tàu khỏi danh sách tàu..."));
         Train trainRemove = trainService.getTrainByTrainId();
+        List<Route> routeList = manageRouteView.getRouteList();
 
-        routeService.getRoutesByTrainId(trainRemove.getTrainId(), manageRouteView.getRouteList());
+        // xóa những chuyến tàu có sử dụng con tàu đang bị xóa
+        List<Route> routeListByTrainId = routeService.getRoutesByTrainId(trainRemove.getTrainId(), routeList);
+        if (!routeListByTrainId.isEmpty()) {
+            for (Route route: routeListByTrainId){
+                routeList.removeIf(route1 -> route1.equals(route));
+            }
+            FileUtils.writeDataToFile(routeList, manageRouteView.getRouteFilePath());
+        }
 
         int trainRemoveIndex = trainService.getTrainIndexByID(trainRemove.getTrainId());
         trainList.remove(trainRemoveIndex);
@@ -100,11 +183,11 @@ public class ManageTrainView {
                 System.out.println("║ ▶ 01. Sửa số hiệu của tàu                           ║");
                 System.out.println("║ ▶ 02. Sửa hãng tàu                                  ║");
                 System.out.println("║ ▶ 03. Sửa số toa của tàu                            ║");
-                System.out.println("║"+ PaintUtils.setRed(" ▶ 0. Quit")+"                                           ║");
+                System.out.println("║" + PaintUtils.setRed(" ▶ 0. Quit") + "                                           ║");
                 System.out.println("╚═════════════════════════════════════════════════════╝");
 
                 editTrainAction = ActionUtils.intHandleInput("option");
-            }while (editTrainAction < 0 || editTrainAction > 4);
+            } while (editTrainAction < 0 || editTrainAction > 4);
             switch (editTrainAction) {
                 case 1 -> {
                     System.out.println(PaintUtils.setBlue("Chỉnh sửa số hiệu của tàu..."));
@@ -124,15 +207,15 @@ public class ManageTrainView {
                 }
                 case 0 -> continueCheck = false;
             }
-        }while (continueCheck);
+        } while (continueCheck);
     }
 
     public void showListTrain(List<Train> trainList) {
 //        ID,	Tên tàu,	Hãng tàu,	số toa
-        System.out.printf("%-15s %-15s %-20s %-10s\n","ID Tàu","Số hiệu","Hãng tàu","Số toa");
-        for (Train train: trainList){
-            System.out.printf("%-15s %-15s %-20s %-10s\n",train.getTrainId(),
-                    train.getTrainNumber(),train.getProvider(),train.getCarQuanity());
+        System.out.printf("%-15s %-15s %-35s %-10s\n", "ID Tàu", "Số hiệu", "Nhà cung cấp", "Số toa");
+        for (Train train : trainList) {
+            System.out.printf("%-15s %-15s %-35s %-10s\n", train.getTrainId(),
+                    train.getTrainNumber(), train.getProvider().getFullName(), train.getCarQuanity());
         }
     }
 }

@@ -3,13 +3,13 @@ package model;
 public class Train implements Imodel<Train>{
     private int trainId;
     private String trainNumber;
-    private String provider;
+    private ETrainProvider provider;
     private int carQuanity;
 
     public Train() {
     }
 
-    public Train(int trainId, String trainNumber, String provider, int carQuanity) {
+    public Train(int trainId, String trainNumber, ETrainProvider provider, int carQuanity) {
         this.trainId = trainId;
         this.trainNumber = trainNumber;
         this.provider = provider;
@@ -32,11 +32,11 @@ public class Train implements Imodel<Train>{
         this.trainNumber = trainNumber;
     }
 
-    public String getProvider() {
+    public ETrainProvider getProvider() {
         return provider;
     }
 
-    public void setProvider(String provider) {
+    public void setProvider(ETrainProvider provider) {
         this.provider = provider;
     }
 
@@ -51,7 +51,7 @@ public class Train implements Imodel<Train>{
     @Override
     public String toString() {
 //        ID,	Tên tàu,	Hãng tàu,	số toa
-        return String.format("%s,%s,%s,%s",this.trainId,this.trainNumber,this.provider,this.carQuanity);
+        return String.format("%s,%s,%s,%s",this.trainId,this.trainNumber,this.provider.name(),this.carQuanity);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class Train implements Imodel<Train>{
         String[] strings = line.split(",");
         this.trainId = Integer.parseInt(strings[0]);
         this.trainNumber = strings[1];
-        this.provider = strings[2];
+        this.provider = ETrainProvider.getETrainProviderByName(strings[2]);
         this.carQuanity = Integer.parseInt(strings[3]);
     }
 }

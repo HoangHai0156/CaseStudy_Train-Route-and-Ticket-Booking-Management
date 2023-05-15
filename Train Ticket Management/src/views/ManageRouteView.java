@@ -4,6 +4,7 @@ import Comparator.RouteComparator;
 import model.EStation;
 import model.Route;
 import service.RouteService;
+import service.TrainService;
 import utils.*;
 
 import java.util.ArrayList;
@@ -15,17 +16,24 @@ public class ManageRouteView {
     public static Scanner scanner = new Scanner(System.in);
     private static List<Route> routeList;
     private static RouteService routeService;
+    private static TrainService trainService;
     private static ManageTrainView manageTrainView;
     private final String routeFilePath = "./Data/route.csv";
     public ManageRouteView(){
         routeList = FileUtils.readDataFromFile(Route.class,routeFilePath);
-    };
+    }
     public List<Route> getRouteList(){
-        return FileUtils.readDataFromFile(Route.class,routeFilePath);
+        routeList = FileUtils.readDataFromFile(Route.class,routeFilePath);
+        return routeList;
+    }
+    public String getRouteFilePath(){
+        return routeFilePath;
     }
     public void launcher(){
+        routeList = FileUtils.readDataFromFile(Route.class,routeFilePath);
         manageTrainView = new ManageTrainView();
         routeService = new RouteService(routeList);
+        trainService = new TrainService(manageTrainView.getTrainList());
 
         boolean continueCheck = true;
 

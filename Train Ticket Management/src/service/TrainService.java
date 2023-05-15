@@ -1,9 +1,11 @@
 package service;
 
+import model.ETrainProvider;
 import model.Train;
 import utils.ActionUtils;
 import utils.ValidateUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -14,12 +16,39 @@ public class TrainService {
         this.trainList = trainList;
     }
     public boolean isTrainIdExist(int id){
-        for (Train train: trainList){
+        for (Train train: this.trainList){
             if (train.getTrainId() == id){
                 return true;
             }
         }
         return false;
+    }
+    public List<Train> getTrainsByTrainNumber(String trainNumber){
+        List<Train> trainsByTrainNumber = new ArrayList<>();
+        for (Train train: trainList){
+            if (train.getTrainNumber().equalsIgnoreCase(trainNumber)){
+                trainsByTrainNumber.add(train);
+            }
+        }
+        return trainsByTrainNumber;
+    }
+    public List<Train> getTrainsByTrainProvier(String provider){
+        List<Train> trainsByTrainProvier = new ArrayList<>();
+        for (Train train: trainList){
+            if (train.getProvider().name().equals(provider)){
+                trainsByTrainProvier.add(train);
+            }
+        }
+        return trainsByTrainProvier;
+    }
+    public List<Train> getTrainsByCarQuanity(int carQuanity){
+        List<Train> trainsByCarQuanity = new ArrayList<>();
+        for (Train train: trainList){
+            if (train.getCarQuanity() == carQuanity){
+                trainsByCarQuanity.add(train);
+            }
+        }
+        return trainsByCarQuanity;
     }
     public int getNewTrainId(){
         int maxTrainId = 0;
@@ -85,6 +114,23 @@ public class TrainService {
 
         return carQuanity;
     }
+    public ETrainProvider getInputTrainProvider(){
+        ETrainProvider eTrainProvider;
+        boolean nullCheck;
+
+        ETrainProvider.showETrainProviders();
+        System.out.println("Chọn hãng cung cấp tàu theo ID");
+        do {
+            nullCheck = false;
+            int providerId = ActionUtils.intHandleInput("id");
+            eTrainProvider = ETrainProvider.getETrainProviderById(providerId);
+            if (eTrainProvider == null){
+                System.out.println("ID nhập vào không tồn tại. Xin nhập lại");
+                nullCheck = true;
+            }
+        }while (nullCheck);
+        return eTrainProvider;
+    }
     public void editTrainNumber(Train train){
         String newTrainNumber = getInputTrainNumber();
 
@@ -94,7 +140,7 @@ public class TrainService {
     }
     public void editTrainProvider(Train train){
         System.out.println("Nhập vào hãng tàu");
-        String trainProvider = scanner.nextLine();
+        ETrainProvider trainProvider = getInputTrainProvider();
 
         int trainIndex = getTrainIndexByID(train.getTrainId());
         train.setProvider(trainProvider);
@@ -110,7 +156,7 @@ public class TrainService {
     public Train createTrain(){
         String trainNumber = getInputTrainNumber();
         System.out.println("Nhập vào hãng tàu");
-        String trainProvider = scanner.nextLine();
+        ETrainProvider trainProvider = getInputTrainProvider();
         int carQuanity = getInputCarQuanity();
 
         return new Train(getNewTrainId(),trainNumber,trainProvider,carQuanity);
