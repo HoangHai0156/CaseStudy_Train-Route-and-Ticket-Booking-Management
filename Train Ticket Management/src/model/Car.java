@@ -3,15 +3,14 @@ package model;
 public class Car implements Imodel{
     private int carId;
     private int trainId;
-    private int seatNum;
+    private final int seatNum = 4;
 
     public Car() {
     }
 
-    public Car(int carId, int trainId, int seatNum) {
+    public Car(int carId, int trainId) {
         this.carId = carId;
         this.trainId = trainId;
-        this.seatNum = seatNum;
     }
 
     public int getCarId() {
@@ -34,10 +33,6 @@ public class Car implements Imodel{
         return seatNum;
     }
 
-    public void setSeatNum(int seatNum) {
-        this.seatNum = seatNum;
-    }
-
     @Override
     public String toString() {
 //        ID,	ID tàu,	số ghế
@@ -49,6 +44,5 @@ public class Car implements Imodel{
         String[] strings = line.split(",");
         this.carId = Integer.parseInt(strings[0]);
         this.trainId = Integer.parseInt(strings[1]);
-        this.seatNum = Integer.parseInt(strings[2]);
     }
 }

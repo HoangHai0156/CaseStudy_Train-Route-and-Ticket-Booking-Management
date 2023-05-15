@@ -2,18 +2,18 @@ package model;
 
 public class Train implements Imodel<Train>{
     private int trainId;
-    private String name;
+    private String trainNumber;
     private String provider;
-    private int carNum;
+    private int carQuanity;
 
     public Train() {
     }
 
-    public Train(int trainId, String name, String provider, int carNum) {
+    public Train(int trainId, String trainNumber, String provider, int carQuanity) {
         this.trainId = trainId;
-        this.name = name;
+        this.trainNumber = trainNumber;
         this.provider = provider;
-        this.carNum = carNum;
+        this.carQuanity = carQuanity;
     }
 
     public int getTrainId() {
@@ -24,12 +24,12 @@ public class Train implements Imodel<Train>{
         this.trainId = trainId;
     }
 
-    public String getName() {
-        return name;
+    public String getTrainNumber() {
+        return trainNumber;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTrainNumber(String trainNumber) {
+        this.trainNumber = trainNumber;
     }
 
     public String getProvider() {
@@ -40,26 +40,26 @@ public class Train implements Imodel<Train>{
         this.provider = provider;
     }
 
-    public int getCarNum() {
-        return carNum;
+    public int getCarQuanity() {
+        return carQuanity;
     }
 
-    public void setCarNum(int carNum) {
-        this.carNum = carNum;
+    public void setCarQuanity(int carQuanity) {
+        this.carQuanity = carQuanity;
     }
 
     @Override
     public String toString() {
 //        ID,	Tên tàu,	Hãng tàu,	số toa
-        return String.format("%s,%s,%s,%s",this.trainId,this.name,this.provider,this.carNum);
+        return String.format("%s,%s,%s,%s",this.trainId,this.trainNumber,this.provider,this.carQuanity);
     }
 
     @Override
     public void parseData(String line) {
         String[] strings = line.split(",");
         this.trainId = Integer.parseInt(strings[0]);
-        this.name = strings[1];
+        this.trainNumber = strings[1];
         this.provider = strings[2];
-        this.carNum = Integer.parseInt(strings[3]);
+        this.carQuanity = Integer.parseInt(strings[3]);
     }
 }

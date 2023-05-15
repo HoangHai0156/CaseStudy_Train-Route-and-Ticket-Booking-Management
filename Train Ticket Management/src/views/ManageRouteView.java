@@ -1,5 +1,6 @@
 package views;
 
+import Comparator.RouteComparator;
 import model.EStation;
 import model.Route;
 import service.RouteService;
@@ -12,14 +13,18 @@ import java.util.Scanner;
 
 public class ManageRouteView {
     public static Scanner scanner = new Scanner(System.in);
-    public static List<Route> routeList = new ArrayList<>();
+    private static List<Route> routeList;
     private static RouteService routeService;
-    private static ManageTrainView manageTrainView = new ManageTrainView();
+    private static ManageTrainView manageTrainView;
     private final String routeFilePath = "./Data/route.csv";
     public ManageRouteView(){
         routeList = FileUtils.readDataFromFile(Route.class,routeFilePath);
     };
+    public List<Route> getRouteList(){
+        return FileUtils.readDataFromFile(Route.class,routeFilePath);
+    }
     public void launcher(){
+        manageTrainView = new ManageTrainView();
         routeService = new RouteService(routeList);
 
         boolean continueCheck = true;
@@ -42,30 +47,106 @@ public class ManageRouteView {
 
                 manageRouteAction = ActionUtils.intHandleInput("option");
             }while (manageRouteAction < 0 || manageRouteAction > 6);
-            switch (manageRouteAction){
-                case 1:
-                    showRouteList(routeList);
-                    break;
-                case 2:
-                    editRouteView();
-                    break;
-                case 3:
-                    removeRouteView();
-                    break;
-                case 4:
-                    addRouteView();
-                    break;
-                case 5:
-                    findRouteView();
-                    break;
-                case 6:
-                    sortRouteView();
-                    break;
-                case 0:
-                    continueCheck = false;
-                    break;
+            switch (manageRouteAction) {
+                case 1 -> showRouteList(routeList);
+                case 2 -> editRouteView();
+                case 3 -> removeRouteView();
+                case 4 -> addRouteView();
+                case 5 -> findRouteView();
+                case 6 -> sortRouteView();
+                case 0 -> continueCheck = false;
             }
         }while (continueCheck);
+    }
+
+    private void sortRouteView() {
+        System.out.println("Sắp xếp chuyến đi...");
+        int flowAction;
+        boolean isAscending;
+
+        do {
+            System.out.println("Sắp xếp theo chiều tăng dần hay giảm dần?");
+            System.out.println("▶ 01. Tăng dần");
+            System.out.println("▶ 02. Giảm dần");
+            flowAction = ActionUtils.intHandleInput("option");
+        }while (flowAction < 0 || flowAction > 2);
+
+        isAscending = flowAction == 1;
+
+        boolean continueCheck = true;
+
+        do {
+            int sortRouteAction;
+            do {
+                System.out.println("╔═════════════════════════════════════════════════════╗");
+                System.out.println("║              THICK MENU - Tìm kiếm                  ║");
+                System.out.println("╠═════════════════════════════════════════════════════╣");
+                System.out.println("║ Options:                                            ║");
+                System.out.println("║ ▶ 01. Sắp xếp chuyến đi theo ID                     ║");
+                System.out.println("║ ▶ 02. Sắp xếp chuyến đi theo ngày khởi hành         ║");
+                System.out.println("║ ▶ 03. Sắp xếp chuyến đi theo ngày kết thúc          ║");
+                System.out.println("║ ▶ 04. Sắp xếp chuyến đi theo điểm xuất phát         ║");
+                System.out.println("║ ▶ 05. Sắp xếp chuyến đi theo điểm kết thúc          ║");
+                System.out.println("║ ▶ 06. Sắp xếp chuyến đi theo thời gian chạy         ║");
+                System.out.println("║ ▶ 07. Sắp xếp chuyến đi theo giá                    ║");
+                System.out.println("║"+ PaintUtils.setRed(" ▶ 0. Quit")+"                                           ║");
+                System.out.println("╚═════════════════════════════════════════════════════╝");
+
+                sortRouteAction = ActionUtils.intHandleInput("option");
+            }while (sortRouteAction < 0 || sortRouteAction > 7);
+            switch (sortRouteAction) {
+                case 1 -> sortRouteById(isAscending);
+                case 2 -> sortRouteByDepartDate(isAscending);
+                case 3 -> sortRouteByArriveDate(isAscending);
+                case 4 -> sortRouteByFromStation(isAscending);
+                case 5 -> sortRouteByDestStation(isAscending);
+                case 6 -> sortRouteByRunTime(isAscending);
+                case 7 -> sortRouteByPrice(isAscending);
+                case 0 -> continueCheck = false;
+            }
+        }while (continueCheck);
+    }
+
+    private void sortRouteByPrice(boolean isAscending) {
+        RouteComparator priceComparator = new RouteComparator("price",isAscending);
+        routeList.sort(priceComparator);
+        showRouteList(routeList);
+    }
+
+    private void sortRouteByRunTime(boolean isAscending) {
+        RouteComparator runTimeComparator = new RouteComparator("runTime",isAscending);
+        routeList.sort(runTimeComparator);
+        showRouteList(routeList);
+    }
+
+    private void sortRouteByDestStation(boolean isAscending) {
+        RouteComparator destStationComparator = new RouteComparator("arriveStation",isAscending);
+        routeList.sort(destStationComparator);
+        showRouteList(routeList);
+    }
+
+    private void sortRouteByFromStation(boolean isAscending) {
+        RouteComparator fromStationComparator = new RouteComparator("fromStation",isAscending);
+        routeList.sort(fromStationComparator);
+        showRouteList(routeList);
+    }
+
+    private void sortRouteByArriveDate(boolean isAscending) {
+        RouteComparator arriveDateComparator = new RouteComparator("arriveDate",isAscending);
+        routeList.sort(arriveDateComparator);
+        showRouteList(routeList);
+    }
+
+    private void sortRouteByDepartDate(boolean isAscending) {
+        RouteComparator departDateComparator = new RouteComparator("",isAscending);
+        routeList.sort(departDateComparator);
+        showRouteList(routeList);
+    }
+
+    private void sortRouteById(boolean isAscending) {
+        RouteComparator idComparator = new RouteComparator("routeId",isAscending);
+        routeList.sort(idComparator);
+        showRouteList(routeList);
     }
 
     private void addRouteView() {
@@ -237,7 +318,7 @@ public class ManageRouteView {
                 "Điểm xuất phát","Điểm kết thúc","Giá chuyến");
         for (Route route: routeList){
 //            id chuyến đi	id tàu	khởi hành time	thời gian chạy(H)  den noi time	loại chuyến đi	Đ xuất phát	Đ kết thúc	Giá
-            Date arriveDate = routeService.getRouteArriveTime(route);
+            Date arriveDate = route.getRouteArriveDate();
             System.out.printf("%-10s %-10s %-20s %-20s %-20s %-20s %-20s %-15s\n",
                     route.getRouteId(),route.getTrainId(), DateUtils.format(route.getDepartTime()),
                     route.getRunTime(),DateUtils.format(arriveDate),

@@ -230,12 +230,12 @@ public class RouteService {
         return routeListById;
     }
 
-    public Date getRouteArriveTime(Route route) {
-        double runTime = route.getRunTime();
-        Date departDateTime = route.getDepartTime();
-
-        return DateUtils.plusHour(departDateTime, runTime);
-    }
+//    public Date getRouteArriveTime(Route route) {
+//        double runTime = route.getRunTime();
+//        Date departDateTime = route.getDepartTime();
+//
+//        return DateUtils.plusHour(departDateTime, runTime);
+//    }
 
     public void editDepartTimeRoute(Route route) {
         Date newDepartDate;
@@ -294,14 +294,14 @@ public class RouteService {
             }
         } else {
             if (nextRoute == null) {
-                Date previousRouteAriveDate = getRouteArriveTime(previousRoute);
+                Date previousRouteAriveDate = previousRoute.getRouteArriveDate();
                 double runTimePreviousToThis = getRuntime(previousRoute.getDestination(), from);
                 if (DateUtils.plusHour(previousRouteAriveDate, runTimePreviousToThis).getTime() > departDate.getTime()) {
                     System.out.println("Thời gian khởi hành bị mâu thuẫn với thời gian chạy các chuyến khác của tàu. Xin hãy nhập lại");
                     return true;
                 }
             } else {
-                Date previousRouteAriveDate = getRouteArriveTime(previousRoute);
+                Date previousRouteAriveDate = previousRoute.getRouteArriveDate();
                 double runTimePreviousToThis = getRuntime(previousRoute.getDestination(), from);
                 Date nextRouteDepartDate = nextRoute.getDepartTime();
                 double runTimeDestToNextRoute = getRuntime(destination, nextRoute.getFrom());
@@ -346,7 +346,7 @@ public class RouteService {
     }
 
     public List<Route> sortRoutesByDepartDate(List<Route> routeList) {
-        RouteComparator routeComparatorByDepartDate = new RouteComparator("");
+        RouteComparator routeComparatorByDepartDate = new RouteComparator("",true);
         routeList.sort(routeComparatorByDepartDate);
         return routeList;
     }

@@ -100,6 +100,9 @@ public class Route implements Imodel<Route>{
         return String.format("%s,%s,%s,%s,%s,%s,%s,%s",this.routeId,this.trainId, DateUtils.format(this.departTime),
                 this.runTime,this.routeType.toString(),this.from.name(),this.destination.name(),this.price);
     }
+    public Date getRouteArriveDate(){
+        return DateUtils.plusHour(this.departTime,this.runTime);
+    }
 
     @Override
     public void parseData(String line) {
