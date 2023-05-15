@@ -5,7 +5,7 @@ train
 ID,	Tên tàu,	Hãng tàu,	số toa
 
 car
-ID,	ID tàu,	số ghế
+ID,	ID tàu
 
 seat
 id ghế,	id chuyen di,	id tàu,	id toa,	trạng thái trống

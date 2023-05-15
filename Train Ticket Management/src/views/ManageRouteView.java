@@ -87,7 +87,7 @@ public class ManageRouteView {
             int sortRouteAction;
             do {
                 System.out.println("╔═════════════════════════════════════════════════════╗");
-                System.out.println("║              THICK MENU - Tìm kiếm                  ║");
+                System.out.println("║              THICK MENU - Sắp xếp chuyến đi         ║");
                 System.out.println("╠═════════════════════════════════════════════════════╣");
                 System.out.println("║ Options:                                            ║");
                 System.out.println("║ ▶ 01. Sắp xếp chuyến đi theo ID                     ║");
@@ -320,7 +320,7 @@ public class ManageRouteView {
         return routeService.findRouteById(id);
     }
 
-    private void showRouteList(List<Route> routeList) {
+    public void showRouteList(List<Route> routeList) {
         System.out.printf("%-10s %-10s %-20s %-20s %-20s %-20s %-20s %-15s\n",
                 "ID Chuyến","ID tàu","Thời gian khởi hành","Thời gian chạy (H)","Thời gian đến",
                 "Điểm xuất phát","Điểm kết thúc","Giá chuyến");

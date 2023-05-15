@@ -1,5 +1,6 @@
 package service;
 
+import Comparator.TrainComparator;
 import model.ETrainProvider;
 import model.Train;
 import utils.ActionUtils;
@@ -160,5 +161,25 @@ public class TrainService {
         int carQuanity = getInputCarQuanity();
 
         return new Train(getNewTrainId(),trainNumber,trainProvider,carQuanity);
+    }
+    public List<Train> sortTrainById(boolean isAscending){
+        TrainComparator trainComparatorById = new TrainComparator("trainId",isAscending);
+        trainList.sort(trainComparatorById);
+        return trainList;
+    }
+    public List<Train> sortTrainByTrainNumber(boolean isAscending){
+        TrainComparator trainComparatorByTrainNumber = new TrainComparator("trainNumber",isAscending);
+        trainList.sort(trainComparatorByTrainNumber);
+        return trainList;
+    }
+    public List<Train> sortTrainByProvider(boolean isAscending){
+        TrainComparator trainComparatorByProvider = new TrainComparator("provider",isAscending);
+        trainList.sort(trainComparatorByProvider);
+        return trainList;
+    }
+    public List<Train> sortTrainByCarQuanity(boolean isAscending){
+        TrainComparator trainComparatorByCarQuanity = new TrainComparator("provider",isAscending);
+        trainList.sort(trainComparatorByCarQuanity);
+        return trainList;
     }
 }

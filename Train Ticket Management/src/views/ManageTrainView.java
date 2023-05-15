@@ -58,26 +58,57 @@ public class ManageTrainView {
                 manageTrainAction = ActionUtils.intHandleInput("option");
             } while (manageTrainAction < 0 || manageTrainAction > 6);
             switch (manageTrainAction) {
-                case 1:
-                    showListTrain(trainList);
-                    break;
-                case 2:
-                    addTrainView();
-                    break;
-                case 3:
-                    editTrainView();
-                    break;
-                case 4:
-                    removeTrainView();
-                    break;
-                case 5:
-                    findTrainView();
-                    break;
-                case 0:
-                    continueCheck = false;
-                    break;
+                case 1 -> showListTrain(trainList);
+                case 2 -> addTrainView();
+                case 3 -> editTrainView();
+                case 4 -> removeTrainView();
+                case 5 -> findTrainView();
+                case 6 -> sortTrainView();
+                case 0 -> continueCheck = false;
             }
         } while (continueCheck);
+    }
+
+    private void sortTrainView() {
+        System.out.println("Sắp xếp tàu...");
+        int flowAction;
+        boolean isAscending;
+
+        do {
+            System.out.println("Sắp xếp theo chiều tăng dần hay giảm dần?");
+            System.out.println("▶ 01. Tăng dần");
+            System.out.println("▶ 02. Giảm dần");
+            flowAction = ActionUtils.intHandleInput("option");
+        }while (flowAction < 0 || flowAction > 2);
+
+        isAscending = flowAction == 1;
+
+        boolean continueCheck = true;
+
+        do {
+            int sortRouteAction;
+            do {
+                System.out.println("╔═════════════════════════════════════════════════════╗");
+                System.out.println("║              THICK MENU - Sắp xếp tàu               ║");
+                System.out.println("╠═════════════════════════════════════════════════════╣");
+                System.out.println("║ Options:                                            ║");
+                System.out.println("║ ▶ 01. Sắp xếp tàu theo ID                           ║");
+                System.out.println("║ ▶ 02. Sắp xếp tàu theo số hiệu                      ║");
+                System.out.println("║ ▶ 03. Sắp xếp tàu theo nhà cung cấp                 ║");
+                System.out.println("║ ▶ 04. Sắp xếp tàu theo số toa                       ║");
+                System.out.println("║"+ PaintUtils.setRed(" ▶ 0. Quit")+"                                           ║");
+                System.out.println("╚═════════════════════════════════════════════════════╝");
+
+                sortRouteAction = ActionUtils.intHandleInput("option");
+            }while (sortRouteAction < 0 || sortRouteAction > 4);
+            switch (sortRouteAction) {
+                case 1 -> showListTrain(trainService.sortTrainById(isAscending));
+                case 2 -> showListTrain(trainService.sortTrainByTrainNumber(isAscending));
+                case 3 -> showListTrain(trainService.sortTrainByProvider(isAscending));
+                case 4 -> showListTrain(trainService.sortTrainByCarQuanity(isAscending));
+                case 0 -> continueCheck = false;
+            }
+        }while (continueCheck);
     }
 
     private void findTrainView() {
@@ -116,7 +147,7 @@ public class ManageTrainView {
         int searchCarQuanity = trainService.getInputCarQuanity();
         List<Train> searchedTrains = trainService.getTrainsByCarQuanity(searchCarQuanity);
         if (searchedTrains.isEmpty()){
-            System.out.println("Số lượng toa không tồn tại");
+            System.out.println("Không tìm thấy tàu nào có "+searchCarQuanity+" toa");
         }else showListTrain(searchedTrains);
     }
 
@@ -124,7 +155,7 @@ public class ManageTrainView {
         ETrainProvider searchTrainProvider = trainService.getInputTrainProvider();
         List<Train> searchedTrains = trainService.getTrainsByTrainProvier(searchTrainProvider.name());
         if (searchedTrains.isEmpty()){
-            System.out.println("Hãng cung cấp không tồn tại");
+            System.out.println("Không tìm thấy tàu nào từ nhà cung cấp "+searchTrainProvider.getFullName());
         }else showListTrain(searchedTrains);
     }
 
@@ -132,7 +163,7 @@ public class ManageTrainView {
         String searchTrainNumber = trainService.getInputTrainNumber();
         List<Train> searchedTrains = trainService.getTrainsByTrainNumber(searchTrainNumber);
         if (searchedTrains.isEmpty()){
-            System.out.println("Số hiệu không tồn tại");
+            System.out.println("Không tìm thấy tàu nào với số hiệu "+searchTrainNumber);
         }else showListTrain(searchedTrains);
     }
 
@@ -155,6 +186,7 @@ public class ManageTrainView {
             }
             FileUtils.writeDataToFile(routeList, manageRouteView.getRouteFilePath());
         }
+        // TODO: 15/5/2023 Cập nhật lại danh sách ghế ngồi
 
         int trainRemoveIndex = trainService.getTrainIndexByID(trainRemove.getTrainId());
         trainList.remove(trainRemoveIndex);
