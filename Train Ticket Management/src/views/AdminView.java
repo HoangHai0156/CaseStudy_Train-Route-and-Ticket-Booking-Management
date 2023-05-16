@@ -16,11 +16,6 @@ public class AdminView {
 
     }
     public void launcher(){
-        manageRouteView = new ManageRouteView();
-        manageTrainView = new ManageTrainView();
-        manageCustomerView = new ManageCustomerView();
-        manageSeatView = new ManageSeatView();
-        manageTicketView = new ManageTicketView();
 
         boolean continueCheck = true;
 
@@ -41,6 +36,13 @@ public class AdminView {
 
                 adminAction = ActionUtils.intHandleInput("option");
             }while (adminAction < 0 || adminAction > 7);
+
+            manageRouteView = new ManageRouteView();
+            manageTrainView = new ManageTrainView();
+            manageCustomerView = new ManageCustomerView();
+            manageSeatView = new ManageSeatView();
+            manageTicketView = new ManageTicketView();
+
             switch (adminAction) {
                 case 1 -> manageRouteView.launcher();
                 case 2 -> manageTrainView.launcher();

@@ -23,4 +23,10 @@ public class ValidateUtils {
         Matcher matcher = pattern.matcher(trainNumber);
         return matcher.matches();
     }
+    public static boolean seatIdValidate(String seatId){
+        REGEX = "^R[1-9]\\d*T[1-9]\\d*C[1-9]\\d*S[1-9]\\d*$";
+        Pattern pattern = Pattern.compile(REGEX);
+        Matcher matcher = pattern.matcher(seatId);
+        return matcher.matches();
+    }
 }

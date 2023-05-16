@@ -107,8 +107,8 @@ public class TrainService {
         do {
             isCarQuanityInvalid = false;
             carQuanity = ActionUtils.intHandleInput("số toa");
-            if (carQuanity < 0){
-                System.out.println("Số toa không thể là số âm. Xin nhập lại");
+            if (carQuanity <= 0){
+                System.out.println("Số toa không thể là không hay số âm. Xin nhập lại");
                 isCarQuanityInvalid = true;
             }
         }while (isCarQuanityInvalid);

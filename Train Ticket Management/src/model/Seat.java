@@ -1,7 +1,7 @@
 package model;
 
 public class Seat implements Imodel<Seat> {
-    private int seatId;
+    private String seatId;
     private int routeId;
     private int trainId;
     private int carId;
@@ -10,7 +10,7 @@ public class Seat implements Imodel<Seat> {
     public Seat() {
     }
 
-    public Seat(int seatId, int routeId, int trainId, int carId, boolean isEmpty) {
+    public Seat(String seatId, int routeId, int trainId, int carId, boolean isEmpty) {
         this.seatId = seatId;
         this.routeId = routeId;
         this.trainId = trainId;
@@ -18,11 +18,11 @@ public class Seat implements Imodel<Seat> {
         this.isEmpty = isEmpty;
     }
 
-    public int getSeatId() {
+    public String getSeatId() {
         return seatId;
     }
 
-    public void setSeatId(int seatId) {
+    public void setSeatId(String seatId) {
         this.seatId = seatId;
     }
 
@@ -67,7 +67,7 @@ public class Seat implements Imodel<Seat> {
     @Override
     public void parseData(String line) {
         String[] strings = line.split(",");
-        this.seatId = Integer.parseInt(strings[0]);
+        this.seatId = strings[0];
         this.routeId = Integer.parseInt(strings[1]);
         this.trainId = Integer.parseInt(strings[2]);
         this.carId = Integer.parseInt(strings[3]);

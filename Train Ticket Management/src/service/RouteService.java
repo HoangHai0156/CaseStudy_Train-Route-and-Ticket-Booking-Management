@@ -15,14 +15,16 @@ import java.util.Scanner;
 public class RouteService {
     public static Scanner scanner = new Scanner(System.in);
     private List<Route> routeList;
-    public static ManageTrainView manageTrainView = new ManageTrainView();
-    public static TrainService trainService = new TrainService(manageTrainView.getTrainList());
+    public static ManageTrainView manageTrainView;
+    public static TrainService trainService;
 
     public RouteService(List<Route> routeList) {
         this.routeList = routeList;
+        manageTrainView = new ManageTrainView();
+        trainService = new TrainService(manageTrainView.getTrainList());
     }
 
-    public Route findRouteById(int id) {
+    public Route getRouteById(int id) {
         for (Route route : routeList) {
             if (route.getRouteId() == id) {
                 return route;
@@ -59,12 +61,13 @@ public class RouteService {
         return -1;
     }
 
-    public void editRoutePrice(Route route) {
+    public List<Route> editRoutePrice(Route route) {
         double price = getInputPrice();
 
         int index = getRouteIndexByID(route.getRouteId());
         route.setPrice(price);
         routeList.set(index, route);
+        return routeList;
     }
 
     public double getInputPrice() {
@@ -83,7 +86,7 @@ public class RouteService {
         return price;
     }
 
-    public void editRouteTrainId(Route route) {
+    public List<Route> editRouteTrainId(Route route) {
         int id;
         boolean check;
 
@@ -97,6 +100,7 @@ public class RouteService {
         int index = getRouteIndexByID(route.getRouteId());
         route.setTrainId(id);
         routeList.set(index, route);
+        return routeList;
     }
     public int getInputTrainId(){
         int trainId;
@@ -113,7 +117,7 @@ public class RouteService {
         } while (check);
         return trainId;
     }
-    public void editFromStation(Route route){
+    public List<Route> editFromStation(Route route){
         int stationId;
         EStation eStation;
         boolean isInvalidStation;
@@ -137,6 +141,7 @@ public class RouteService {
         int index = getRouteIndexByID(route.getRouteId());
         route.setFrom(eStation);
         routeList.set(index, route);
+        return routeList;
     }
     public EStation getInputStation(){
         int stationId;
@@ -166,7 +171,7 @@ public class RouteService {
         return false;
     }
 
-    public void editDestinationStation(Route route){
+    public List<Route> editDestinationStation(Route route){
         int stationId;
         EStation eStation;
         boolean isInvalidStation;
@@ -190,6 +195,7 @@ public class RouteService {
         int index = getRouteIndexByID(route.getRouteId());
         route.setDestination(eStation);
         routeList.set(index, route);
+        return routeList;
     }
 
     public List<Route> getRoutesByDepartDate(String dateString) {
@@ -237,7 +243,7 @@ public class RouteService {
 //        return DateUtils.plusHour(departDateTime, runTime);
 //    }
 
-    public void editDepartTimeRoute(Route route) {
+    public List<Route> editDepartTimeRoute(Route route) {
         Date newDepartDate;
         boolean isConflictDate;
 
@@ -254,6 +260,7 @@ public class RouteService {
         int index = getRouteIndexByID(route.getRouteId());
         route.setDepartTime(newDepartDate);
         routeList.set(index, route);
+        return routeList;
     }
 
     public Date getInputDate() {

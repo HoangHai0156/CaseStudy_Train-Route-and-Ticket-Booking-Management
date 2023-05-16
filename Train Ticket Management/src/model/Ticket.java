@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class Ticket implements Imodel<Ticket>{
     private int ticketId;
-    private int seatId;
+    private String seatId;
     private int customerId;
     private double price;
     private boolean isPaid;
@@ -12,7 +12,7 @@ public class Ticket implements Imodel<Ticket>{
     public Ticket() {
     }
 
-    public Ticket(int ticketId, int seatId, int customerId, double price, boolean isPaid) {
+    public Ticket(int ticketId, String seatId, int customerId, double price, boolean isPaid) {
         this.ticketId = ticketId;
         this.seatId = seatId;
         this.customerId = customerId;
@@ -28,11 +28,11 @@ public class Ticket implements Imodel<Ticket>{
         this.ticketId = ticketId;
     }
 
-    public int getSeatId() {
+    public String getSeatId() {
         return seatId;
     }
 
-    public void setSeatId(int seatId) {
+    public void setSeatId(String seatId) {
         this.seatId = seatId;
     }
 
@@ -70,7 +70,7 @@ public class Ticket implements Imodel<Ticket>{
     public void parseData(String line) {
         String[] strings = line.split(",");
         this.ticketId = Integer.parseInt(strings[0]);
-        this.seatId = Integer.parseInt(strings[1]);
+        this.seatId = strings[1];
         this.customerId = Integer.parseInt(strings[2]);
         this.price = Double.parseDouble(strings[3]);
         this.isPaid = Boolean.parseBoolean(strings[4]);

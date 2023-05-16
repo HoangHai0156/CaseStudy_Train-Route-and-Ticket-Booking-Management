@@ -12,6 +12,7 @@ import utils.PaintUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PrimitiveIterator;
 import java.util.Scanner;
 
 public class ManageTrainView {
@@ -20,6 +21,7 @@ public class ManageTrainView {
     private static TrainService trainService;
     private static RouteService routeService;
     private static ManageRouteView manageRouteView;
+    private static ManageSeatView manageSeatView;
     private static List<Train> trainList;
 
     public List<Train> getTrainList() {
@@ -32,10 +34,6 @@ public class ManageTrainView {
     }
 
     public void launcher() {
-        trainList = FileUtils.readDataFromFile(Train.class, trainFilePath);
-        manageRouteView = new ManageRouteView();
-        routeService = new RouteService(manageRouteView.getRouteList());
-        trainService = new TrainService(trainList);
 
         boolean continueCheck = true;
 
@@ -57,6 +55,13 @@ public class ManageTrainView {
 
                 manageTrainAction = ActionUtils.intHandleInput("option");
             } while (manageTrainAction < 0 || manageTrainAction > 6);
+
+            trainList = FileUtils.readDataFromFile(Train.class, trainFilePath);
+            manageRouteView = new ManageRouteView();
+            manageSeatView = new ManageSeatView();
+            routeService = new RouteService(manageRouteView.getRouteList());
+            trainService = new TrainService(trainList);
+
             switch (manageTrainAction) {
                 case 1 -> showListTrain(trainList);
                 case 2 -> addTrainView();
@@ -186,7 +191,8 @@ public class ManageTrainView {
             }
             FileUtils.writeDataToFile(routeList, manageRouteView.getRouteFilePath());
         }
-        // TODO: 15/5/2023 Cập nhật lại danh sách ghế ngồi
+
+        manageSeatView.updateSeatList();
 
         int trainRemoveIndex = trainService.getTrainIndexByID(trainRemove.getTrainId());
         trainList.remove(trainRemoveIndex);
@@ -235,7 +241,8 @@ public class ManageTrainView {
                     System.out.println(PaintUtils.setBlue("Chỉnh sửa số toa của tàu..."));
                     trainService.editCarQuanity(trainEdit);
                     FileUtils.writeDataToFile(trainList, trainFilePath);
-                    // TODO: 15/5/2023 Cập nhật lại danh sách ghế ngồi
+
+                    manageSeatView.updateSeatList();
                 }
                 case 0 -> continueCheck = false;
             }

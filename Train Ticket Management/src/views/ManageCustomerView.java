@@ -1,13 +1,27 @@
 package views;
 
+import model.Customer;
 import utils.ActionUtils;
+import utils.FileUtils;
 import utils.PaintUtils;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class ManageCustomerView {
     public static Scanner scanner = new Scanner(System.in);
-    public ManageCustomerView(){}
+    private static List<Customer> customerList;
+    private final static String fileCustomerPath = "./Data/customer.csv";
+    public ManageCustomerView(){
+        customerList = FileUtils.readDataFromFile(Customer.class,fileCustomerPath);
+    }
+    public List<Customer> getCustomerList(){
+        customerList = FileUtils.readDataFromFile(Customer.class,fileCustomerPath);
+        return customerList;
+    }
+    public String getFileCustomerPath(){
+        return fileCustomerPath;
+    }
     public void launcher(){
         boolean continueCheck = true;
 
@@ -29,11 +43,16 @@ public class ManageCustomerView {
             }while (manageCustomerAction < 0 || manageCustomerAction > 4);
             switch (manageCustomerAction){
                 case 1:
-
+                    showCustomerListView();
+                    break;
                 case 0:
                     continueCheck = false;
                     break;
             }
         }while (continueCheck);
+    }
+
+    private void showCustomerListView() {
+
     }
 }

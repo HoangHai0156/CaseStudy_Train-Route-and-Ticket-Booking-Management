@@ -7,7 +7,6 @@ import service.RouteService;
 import service.TrainService;
 import utils.*;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
@@ -18,6 +17,8 @@ public class ManageRouteView {
     private static RouteService routeService;
     private static TrainService trainService;
     private static ManageTrainView manageTrainView;
+    private static ManageSeatView manageSeatView;
+
     private final String routeFilePath = "./Data/route.csv";
     public ManageRouteView(){
         routeList = FileUtils.readDataFromFile(Route.class,routeFilePath);
@@ -30,11 +31,6 @@ public class ManageRouteView {
         return routeFilePath;
     }
     public void launcher(){
-        routeList = FileUtils.readDataFromFile(Route.class,routeFilePath);
-        manageTrainView = new ManageTrainView();
-        routeService = new RouteService(routeList);
-        trainService = new TrainService(manageTrainView.getTrainList());
-
         boolean continueCheck = true;
 
         do {
@@ -55,6 +51,13 @@ public class ManageRouteView {
 
                 manageRouteAction = ActionUtils.intHandleInput("option");
             }while (manageRouteAction < 0 || manageRouteAction > 6);
+
+            routeList = FileUtils.readDataFromFile(Route.class,routeFilePath);
+            manageTrainView = new ManageTrainView();
+            manageSeatView = new ManageSeatView();
+            routeService = new RouteService(routeList);
+            trainService = new TrainService(manageTrainView.getTrainList());
+
             switch (manageRouteAction) {
                 case 1 -> showRouteList(routeList);
                 case 2 -> editRouteView();
@@ -163,7 +166,7 @@ public class ManageRouteView {
 
         routeList.add(newRoute);
         FileUtils.writeDataToFile(routeList, routeFilePath);
-        // TODO: 14/5/2023 cập nhật lại danh sách ghế ngồi
+        manageSeatView.updateSeatList();
     }
 
     private void removeRouteView() {
@@ -172,7 +175,7 @@ public class ManageRouteView {
         
         routeService.removeRouteById(route);
         FileUtils.writeDataToFile(routeList, routeFilePath);
-        // TODO: 14/5/2023 cập nhật lại danh sách ghế ngồi
+        manageSeatView.updateSeatList();
     }
 
     private void editRouteView() {
@@ -203,29 +206,29 @@ public class ManageRouteView {
             switch (editRouteAction) {
                 case 1 -> {
                     manageTrainView.showListTrain(manageTrainView.getTrainList());
-                    routeService.editRouteTrainId(route);
-                    FileUtils.writeDataToFile(routeList, routeFilePath);
+                    List<Route> updatedRouteList = routeService.editRouteTrainId(route);
+                    FileUtils.writeDataToFile(updatedRouteList, routeFilePath);
                 }
-                // TODO: 13/5/2023 cập nhật lại danh sách ghế ngồi
                 case 2 -> {
-                    routeService.editDepartTimeRoute(route);
-                    FileUtils.writeDataToFile(routeList, routeFilePath);
+                    List<Route> updatedRouteList = routeService.editDepartTimeRoute(route);
+                    FileUtils.writeDataToFile(updatedRouteList, routeFilePath);
                 }
                 case 3 -> {
-                    routeService.editFromStation(route);
-                    FileUtils.writeDataToFile(routeList, routeFilePath);
+                    List<Route> updatedRouteList = routeService.editFromStation(route);
+                    FileUtils.writeDataToFile(updatedRouteList, routeFilePath);
                 }
                 case 4 -> {
-                    routeService.editDestinationStation(route);
-                    FileUtils.writeDataToFile(routeList, routeFilePath);
+                    List<Route> updatedRouteList = routeService.editDestinationStation(route);
+                    FileUtils.writeDataToFile(updatedRouteList, routeFilePath);
                 }
                 case 5 -> {
-                    routeService.editRoutePrice(route);
-                    FileUtils.writeDataToFile(routeList, routeFilePath);
+                    List<Route> updatedRouteList = routeService.editRoutePrice(route);
+                    FileUtils.writeDataToFile(updatedRouteList, routeFilePath);
                 }
                 case 0 -> continueCheck = false;
             }
         }while (continueCheck);
+        manageSeatView.updateSeatList();
     }
 
     private void findRouteView() {
@@ -317,7 +320,7 @@ public class ManageRouteView {
                 System.out.println("ID chuyến không tồn tại. Hãy nhập lại");
             }
         }while (check);
-        return routeService.findRouteById(id);
+        return routeService.getRouteById(id);
     }
 
     public void showRouteList(List<Route> routeList) {
