@@ -217,14 +217,10 @@ public class TicketService {
                 +customerService.getCustomerByCustomerID(customerID).geteCustomerType().getDiscountPrice();
         return new Ticket(newId,seatId,customerID,price,false,currentDateIncludeHour);
     }
-//    public void removeTicketsByCustomerId(int customerID){
-////        List<Ticket> newList = ticketList.stream().filter(ticket -> ticket.getCustomerId() != customerID && ticket.isPaid()).collect(Collectors.toList());
-//        List<Ticket> newListTicket = ticketList;
-//        for (Ticket ticket: ticketList){
-//            if (ticket.getCustomerId() != customerID && ticket.isPaid())
-//        }
-//
-//        FileUtils.writeDataToFile(newList, manageTicketView.getTicketFilePath());
-//        manageSeatView.updateSeatList();
-//    }
+    public void removeTicketsByCustomerId(int customerID){
+        List<Ticket> newListTicket = ticketList.stream().filter(ticket -> ticket.getCustomerId() != customerID).collect(Collectors.toList());
+
+        FileUtils.writeDataToFile(newListTicket, manageTicketView.getTicketFilePath());
+        manageSeatView.updateSeatList();
+    }
 }
