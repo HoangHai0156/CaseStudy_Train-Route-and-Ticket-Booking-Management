@@ -15,15 +15,12 @@ import utils.PaintUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.function.Predicate;
 
 public class ManageSeatView {
     private static Scanner scanner = new Scanner(System.in);
     private static List<Seat> seatList;
     private static SeatService seatService;
-    private static TicketService ticketService;
     private static ManageTicketView manageTicketView;
-    private static ManageSeatView manageSeatView;
     private static TrainService trainService;
     private static ManageTrainView manageTrainView;
     private final String seatFilePath = "./Data/seat.csv";
@@ -94,17 +91,15 @@ public class ManageSeatView {
         seatService.showSeatList(list);
     }
 
-    protected void updateSeatList(){
+    public void updateSeatList(){
         manageTrainView = new ManageTrainView();
         manageRouteView = new ManageRouteView();
-        manageSeatView = new ManageSeatView();
         manageTicketView = new ManageTicketView();
-        seatService = new SeatService(manageSeatView.getSeatList());
+        seatService = new SeatService(getSeatList());
         List<Ticket> ticketList = manageTicketView.getTicketList();
         List<Ticket> updateTicketList = new ArrayList<>();
         List<Train> trainList = manageTrainView.getTrainList();
         trainService = new TrainService(trainList);
-        ticketService = new TicketService(ticketList);
         int carSeat = 4;
 
         List<Seat> seatListUpdate = new ArrayList<>();

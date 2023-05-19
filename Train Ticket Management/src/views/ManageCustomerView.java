@@ -3,6 +3,7 @@ package views;
 import model.Customer;
 import model.ECustomerType;
 import service.CustomerService;
+import service.TicketService;
 import utils.ActionUtils;
 import utils.DateUtils;
 import utils.FileUtils;
@@ -16,6 +17,8 @@ public class ManageCustomerView {
     public static Scanner scanner = new Scanner(System.in);
     private static List<Customer> customerList;
     private static CustomerService customerService;
+    private static ManageTicketView manageTicketView;
+    private static TicketService ticketService;
     private final static String fileCustomerPath = "./Data/customer.csv";
     public ManageCustomerView(){
         customerList = FileUtils.readDataFromFile(Customer.class,fileCustomerPath);
@@ -47,6 +50,8 @@ public class ManageCustomerView {
                 manageCustomerAction = ActionUtils.intHandleInput("option");
             }while (manageCustomerAction < 0 || manageCustomerAction > 4);
 
+            manageTicketView = new ManageTicketView();
+            ticketService = new TicketService(manageTicketView.getTicketList());
             customerList = getCustomerList();
             customerService = new CustomerService(getCustomerList());
 
@@ -76,6 +81,8 @@ public class ManageCustomerView {
         boolean isConfirm = ActionUtils.getConfirm("xóa khách hàng này");
 
         if (isConfirm){
+            ticketService.removeTicketsByCustomerId(customerRemoveId);
+
             customerList.remove(customerService.getIndexByCustomerId(customerRemoveId));
             FileUtils.writeDataToFile(customerList,fileCustomerPath);
         }

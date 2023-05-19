@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class TicketService {
     private static Scanner scanner = new Scanner(System.in);
@@ -28,6 +29,7 @@ public class TicketService {
         manageCustomerView = new ManageCustomerView();
         manageRouteView = new ManageRouteView();
         manageTrainView = new ManageTrainView();
+        manageTicketView = new ManageTicketView();
         seatService = new SeatService(manageSeatView.getSeatList());
         customerService = new CustomerService(manageCustomerView.getCustomerList());
         routeService = new RouteService(manageRouteView.getRouteList());
@@ -215,4 +217,14 @@ public class TicketService {
                 +customerService.getCustomerByCustomerID(customerID).geteCustomerType().getDiscountPrice();
         return new Ticket(newId,seatId,customerID,price,false,currentDateIncludeHour);
     }
+//    public void removeTicketsByCustomerId(int customerID){
+////        List<Ticket> newList = ticketList.stream().filter(ticket -> ticket.getCustomerId() != customerID && ticket.isPaid()).collect(Collectors.toList());
+//        List<Ticket> newListTicket = ticketList;
+//        for (Ticket ticket: ticketList){
+//            if (ticket.getCustomerId() != customerID && ticket.isPaid())
+//        }
+//
+//        FileUtils.writeDataToFile(newList, manageTicketView.getTicketFilePath());
+//        manageSeatView.updateSeatList();
+//    }
 }
