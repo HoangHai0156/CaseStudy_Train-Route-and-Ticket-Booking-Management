@@ -36,10 +36,10 @@ public class TicketService {
     }
     public void showTicketList(List<Ticket> ticketList){
 //        ID vé,	ID ghế,	ID Khách hàng,	Giá (giá vé chuyến đi + giá giảm loại KH),	trạng thái thanh toán
-        System.out.printf("%-6s %-10s %-10s %-15s %-15s %-25s %-20s %-10s %-15s %-10s %-25s\n","ID vé",
+        System.out.printf("%-6s %-10s %-10s %-15s %-15s %-25s %-20s %-10s %-15s %-10s %-20s %-25s\n","ID vé",
                 "Tàu hiệu","Toa số","Điểm xuất phát",
                 "Điểm đến","Ngày khởi hành dự kiến","Ngày đến dự kiến"
-                ,"ID ghế","Khách hàng","Giá vé","Trạng thái thanh toán");
+                ,"ID ghế","Khách hàng","Giá vé","Ngày đặt vé","Trạng thái thanh toán");
         for (Ticket ticket: ticketList){
             if (ticket.isPaid()){
                 Customer customer = customerService.getCustomerByCustomerID(ticket.getCustomerId());
@@ -47,13 +47,14 @@ public class TicketService {
                 Train train = trainService.getTrainByTrainId(seat.getTrainId());
                 Route route = routeService.getRouteById(seat.getRouteId());
 
-                System.out.printf("%-6s %-10s %-10s %-15s %-15s %-25s %-20s %-10s %-15s %-10s %-25s\n",
+                System.out.printf("%-6s %-10s %-10s %-15s %-15s %-25s %-20s %-10s %-15s %-10s %-20s %-25s\n",
                         ticket.getTicketId(),
                         train.getTrainNumber(),seat.getCarId(),route.getFrom().getName(),route.getDestination().getName(),
                         DateUtils.format(route.getDepartTime()),DateUtils.format(route.getRouteArriveDate()),
                         ticket.getSeatId(),
                         customer.getName(),
                         CurrencyUtils.getViCurrency(ticket.getPrice()),
+                        DateUtils.format(ticket.getBookingDate()),
                         ticket.isPaid()? PaintUtils.setGreen("Đã thanh toán"):PaintUtils.setOrange("Chưa thanh toán"));
             }
         }
@@ -69,13 +70,14 @@ public class TicketService {
                 Train train = trainService.getTrainByTrainId(seat.getTrainId());
                 Route route = routeService.getRouteById(seat.getRouteId());
 
-                System.out.printf("%-6s %-10s %-10s %-15s %-15s %-25s %-20s %-10s %-15s %-10s %-25s\n",
+                System.out.printf("%-6s %-10s %-10s %-15s %-15s %-25s %-20s %-10s %-15s %-10s %-20s %-25s\n",
                         ticket.getTicketId(),
                         train.getTrainNumber(),seat.getCarId(),route.getFrom().getName(),route.getDestination().getName(),
                         DateUtils.format(route.getDepartTime()),DateUtils.format(route.getRouteArriveDate()),
                         ticket.getSeatId(),
                         customer.getName(),
-                        ticket.getPrice(),
+                        CurrencyUtils.getViCurrency(ticket.getPrice()),
+                        DateUtils.format(ticket.getBookingDate()),
                         ticket.isPaid()? PaintUtils.setGreen("Đã thanh toán"):PaintUtils.setOrange("Chưa thanh toán"));
             }
         }
@@ -98,6 +100,35 @@ public class TicketService {
         }
 
         return ticketListByStatus;
+    }
+    public List<Ticket> getTicketListByDateBetween(List<Ticket> list){
+        List<Ticket> ticketListByDateBetween = new ArrayList<>();
+        String from;
+        String to;
+        boolean isInvalidDate;
+
+        do {
+            isInvalidDate = false;
+            System.out.println("Nhập vào ngày bắt đầu theo định dạng dd/MM/yyyy");
+            from = scanner.nextLine();
+            System.out.println("Nhập vào ngày kết thúc theo định dạng dd/MM/yyyy");
+            to = scanner.nextLine();
+            if (!ValidateUtils.dateValidate(from) || !ValidateUtils.dateValidate(to)){
+                System.out.println("Ngày nhập vào không đúng định dạng. Xin nhập lại");
+                isInvalidDate = true;
+            }
+        }while (isInvalidDate);
+
+        for (Ticket ticket: list){
+            String dateBooking = DateUtils.formatDateWithoutHour(ticket.getBookingDate());
+            Date formattedDateBooking = DateUtils.parseDate(dateBooking);
+            if ((formattedDateBooking.getTime() >= DateUtils.parseDate(from).getTime()) &&
+                    formattedDateBooking.getTime() <= DateUtils.parseDate(to).getTime()){
+                ticketListByDateBetween.add(ticket);
+            }
+        }
+
+        return ticketListByDateBetween;
     }
     public int getTicketIndexByTicketId(int ticketID, List<Ticket> list){
         for (int i = 0; i < list.size();i++){
@@ -182,6 +213,6 @@ public class TicketService {
 
         double price = routeService.getRouteById(seatService.getSeatBySeatId(seatId).getRouteId()).getPrice()
                 +customerService.getCustomerByCustomerID(customerID).geteCustomerType().getDiscountPrice();
-        return new Ticket(newId,seatId,customerID,price,false);
+        return new Ticket(newId,seatId,customerID,price,false,currentDateIncludeHour);
     }
 }

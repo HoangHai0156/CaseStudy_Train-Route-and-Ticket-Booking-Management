@@ -1,5 +1,7 @@
 package model;
 
+import utils.DateUtils;
+
 import java.util.Date;
 
 public class Ticket implements Imodel<Ticket>{
@@ -8,16 +10,18 @@ public class Ticket implements Imodel<Ticket>{
     private int customerId;
     private double price;
     private boolean isPaid;
+    private Date bookingDate;
 
     public Ticket() {
     }
 
-    public Ticket(int ticketId, String seatId, int customerId, double price, boolean isPaid) {
+    public Ticket(int ticketId, String seatId, int customerId, double price, boolean isPaid, Date bookingDate) {
         this.ticketId = ticketId;
         this.seatId = seatId;
         this.customerId = customerId;
         this.price = price;
         this.isPaid = isPaid;
+        this.bookingDate = bookingDate;
     }
 
     public int getTicketId() {
@@ -60,10 +64,18 @@ public class Ticket implements Imodel<Ticket>{
         isPaid = paid;
     }
 
+    public Date getBookingDate() {
+        return bookingDate;
+    }
+
+    public void setBookingDate(Date bookingDate) {
+        this.bookingDate = bookingDate;
+    }
+
     @Override
     public String toString() {
-//        ID vé,	ID ghế,	ID Khách hàng,	Giá (giá vé chuyến đi + giá giảm loại KH),	trạng thái thanh toán
-        return String.format("%s,%s,%s,%s,%s",this.ticketId,this.seatId,this.customerId,this.price,this.isPaid);
+//        ID vé,	ID ghế,	ID Khách hàng,	Giá (giá vé chuyến đi + giá giảm loại KH),	trạng thái thanh toán, Ngày đặt
+        return String.format("%s,%s,%s,%s,%s,%s",this.ticketId,this.seatId,this.customerId,this.price,this.isPaid,DateUtils.format(this.bookingDate));
     }
 
     @Override
@@ -74,5 +86,6 @@ public class Ticket implements Imodel<Ticket>{
         this.customerId = Integer.parseInt(strings[2]);
         this.price = Double.parseDouble(strings[3]);
         this.isPaid = Boolean.parseBoolean(strings[4]);
+        this.bookingDate = DateUtils.parseDateWithHour(strings[5]);
     }
 }

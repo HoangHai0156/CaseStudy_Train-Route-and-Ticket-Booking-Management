@@ -6,6 +6,8 @@ import utils.ActionUtils;
 import utils.CurrencyUtils;
 import utils.PaintUtils;
 
+import java.util.List;
+
 public class ManageIncomeView {
     private static ManageTicketView manageTicketView;
     private static TicketService ticketService;
@@ -32,23 +34,29 @@ public class ManageIncomeView {
             ticketService = new TicketService(manageTicketView.getTicketList());
 
             switch (manageIncomeAction) {
-                case 1 -> getAllTimeRevenue();
-//                case 2 -> manageTrainView.launcher();
+                case 1 -> getAllTimeRevenue(manageTicketView.getTicketList());
+                case 2 -> getBetweenRevenue();
                 case 0 -> continueCheck = false;
             }
         }while (continueCheck);
 
     }
 
-    private void getAllTimeRevenue() {
+    private void getBetweenRevenue() {
+        List<Ticket> allTicketListBetween = ticketService.getTicketListByDateBetween(manageTicketView.getTicketList());
+
+        getAllTimeRevenue(allTicketListBetween);
+    }
+
+    private void getAllTimeRevenue(List<Ticket> list) {
         double allTimeRealRevenue = 0;
         double allTimeExpectRevenue = 0;
 
-        for (Ticket ticket: ticketService.getTicketListByStatus(true,manageTicketView.getTicketList())){
+        for (Ticket ticket: ticketService.getTicketListByStatus(true,list)){
             allTimeRealRevenue += ticket.getPrice();
         }
 
-        for (Ticket ticket: manageTicketView.getTicketList()){
+        for (Ticket ticket: list){
             allTimeExpectRevenue  += ticket.getPrice();
         }
 

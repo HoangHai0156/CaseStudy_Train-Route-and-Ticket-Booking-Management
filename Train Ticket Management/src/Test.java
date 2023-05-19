@@ -23,6 +23,7 @@ public class Test {
 //        RouteService routeService = new RouteService(routeList);
 //        Route route = routeService.createRoute();
 //        System.out.println(route);
-        System.out.println(CurrencyUtils.getViCurrency(200000));
+//        System.out.println(CurrencyUtils.getViCurrency(200000));
+        System.out.println(DateUtils.formatDateWithoutHour(DateUtils.getCurrentDateIncludeHour()));
     }
 }
