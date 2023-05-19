@@ -11,7 +11,7 @@ public class ActionUtils {
         do {
             checkInvalid = false;
             try {
-                System.out.println("Chọn "+actionName+" thích hợp: ");
+                System.out.println("Chọn "+PaintUtils.setYellow(actionName)+" thích hợp: ");
                 action = Integer.parseInt(scanner.nextLine());
             }catch (NumberFormatException numberFormatException){
                 System.out.println("Giá trị nhập vào không hợp lệ. Vui lòng nhập lại");
@@ -27,7 +27,7 @@ public class ActionUtils {
         do {
             checkInvalid = false;
             try {
-                System.out.println("Chọn "+inputName+" thích hợp: ");
+                System.out.println("Chọn "+PaintUtils.setYellow(inputName)+" thích hợp: ");
                 value = Double.parseDouble(scanner.nextLine());
             }catch (NumberFormatException numberFormatException){
                 System.out.println("Giá trị nhập vào không hợp lệ. Vui lòng nhập lại");
@@ -35,5 +35,26 @@ public class ActionUtils {
             }
         }while (checkInvalid);
         return value;
+    }
+    public static boolean getConfirm(String inputName){
+        boolean checkInvalid;
+        boolean isConfirm = false;
+
+        do {
+            checkInvalid = false;
+            System.out.println(PaintUtils.setRed("Bạn có chắc muốn "+inputName+" không ?(Y/N)"));
+            char confirm = scanner.nextLine().charAt(0);
+
+            if (confirm == 'y' || confirm == 'Y'){
+                isConfirm = true;
+            }else if (confirm == 'n' || confirm == 'N'){
+                isConfirm = false;
+            }else {
+                System.out.println("Vui lòng chỉ nhập ký tự Y hoặc N. Xin nhập lại");
+                checkInvalid = true;
+            }
+        }while (checkInvalid);
+
+        return isConfirm;
     }
 }

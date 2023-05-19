@@ -11,7 +11,7 @@ seat
 id ghế,	id chuyen di,	id tàu,	id toa,	trạng thái trống
 
 customer
-ID KH,	Tên KH,	Loại khách hàng
+ID KH,	Tên KH,	username, password, DOB, age, Loại khách hàng, Role
 
 ticket
 ID vé,	ID ghế,	ID Khách hàng,	Giá (giá vé chuyến đi + giá giảm loại KH),	trạng thái thanh toán

@@ -1,6 +1,6 @@
 package views;
 
-import Comparator.RouteComparator;
+import comparator.RouteComparator;
 import model.EStation;
 import model.Route;
 import service.RouteService;
@@ -20,8 +20,10 @@ public class ManageRouteView {
     private static ManageSeatView manageSeatView;
 
     private final String routeFilePath = "./Data/route.csv";
+    private Date currentDateIncludeHour;
     public ManageRouteView(){
         routeList = FileUtils.readDataFromFile(Route.class,routeFilePath);
+        this.currentDateIncludeHour = DateUtils.getCurrentDateIncludeHour();
     }
     public List<Route> getRouteList(){
         routeList = FileUtils.readDataFromFile(Route.class,routeFilePath);
@@ -231,7 +233,7 @@ public class ManageRouteView {
         manageSeatView.updateSeatList();
     }
 
-    private void findRouteView() {
+    protected void findRouteView() {
         boolean continueCheck = true;
 
         do {
@@ -250,6 +252,13 @@ public class ManageRouteView {
 
                 findRouteAction = ActionUtils.intHandleInput("option");
             }while (findRouteAction < 0 || findRouteAction > 4);
+
+            routeList = FileUtils.readDataFromFile(Route.class,routeFilePath);
+            manageTrainView = new ManageTrainView();
+            manageSeatView = new ManageSeatView();
+            routeService = new RouteService(routeList);
+            trainService = new TrainService(manageTrainView.getTrainList());
+
             switch (findRouteAction) {
                 case 1 -> {
                     Route route = searchRouteById();
@@ -323,17 +332,22 @@ public class ManageRouteView {
         return routeService.getRouteById(id);
     }
 
-    public void showRouteList(List<Route> routeList) {
+    protected void showRouteList(List<Route> routeList) {
+        manageTrainView = new ManageTrainView();
+        trainService = new TrainService(manageTrainView.getTrainList());
+
         System.out.printf("%-10s %-10s %-20s %-20s %-20s %-20s %-20s %-15s\n",
-                "ID Chuyến","ID tàu","Thời gian khởi hành","Thời gian chạy (H)","Thời gian đến",
+                "ID Chuyến","Tàu hiệu","Thời gian khởi hành","Thời gian chạy (H)","Thời gian đến",
                 "Điểm xuất phát","Điểm kết thúc","Giá chuyến");
         for (Route route: routeList){
 //            id chuyến đi	id tàu	khởi hành time	thời gian chạy(H)  den noi time	loại chuyến đi	Đ xuất phát	Đ kết thúc	Giá
             Date arriveDate = route.getRouteArriveDate();
             System.out.printf("%-10s %-10s %-20s %-20s %-20s %-20s %-20s %-15s\n",
-                    route.getRouteId(),route.getTrainId(), DateUtils.format(route.getDepartTime()),
+                    route.getRouteId(),trainService.getTrainByTrainId(route.getTrainId()).getTrainNumber()
+                    , DateUtils.format(route.getDepartTime()),
                     route.getRunTime(),DateUtils.format(arriveDate),
-                    route.getFrom().getName(),route.getDestination().getName(),route.getPrice());
+                    route.getFrom().getName(),route.getDestination().getName(),
+                    CurrencyUtils.getViCurrency(route.getPrice()));
         }
     }
 }

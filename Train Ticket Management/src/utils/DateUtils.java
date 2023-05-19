@@ -12,9 +12,29 @@ public class DateUtils {
         formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         return formatter.format(date);
     }
-
-    public static Date parse(String strDate) {
+    public static Date getCurrentDate(){
+        formatter = new SimpleDateFormat("dd/MM/yyyy");
+        Date currentDate = new Date();
+        String strCurrentDate = formatter.format(currentDate);
+        return parseDate(strCurrentDate);
+    }
+    public static Date getCurrentDateIncludeHour(){
         formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        Date currentDate = new Date();
+        String strCurrentDate = formatter.format(currentDate);
+        return parseDateWithHour(strCurrentDate);
+    }
+
+    public static Date parseDateWithHour(String strDate) {
+        formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        try {
+            return formatter.parse(strDate);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public static Date parseDate(String strDate){
+        formatter = new SimpleDateFormat("dd/MM/yyyy");
         try {
             return formatter.parse(strDate);
         } catch (ParseException e) {
@@ -31,5 +51,16 @@ public class DateUtils {
     public static String formatDateWithoutHour(Date date){
         formatter = new SimpleDateFormat("dd/MM/yyyy");
         return formatter.format(date);
+    }
+    public static int getAgeByDOB(Date DOB){
+        Date currentDate = new Date();
+        Calendar clDOB = Calendar.getInstance();
+        Calendar clDate = Calendar.getInstance();
+
+        clDOB.setTime(DOB);
+        clDate.setTime(currentDate);
+
+        int age = clDate.get(Calendar.YEAR) - clDOB.get(Calendar.YEAR);
+        return age;
     }
 }

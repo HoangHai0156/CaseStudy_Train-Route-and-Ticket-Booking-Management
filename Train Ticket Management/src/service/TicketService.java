@@ -1,14 +1,11 @@
 package service;
 
-import model.Seat;
-import model.Ticket;
-import utils.ActionUtils;
-import utils.PaintUtils;
-import views.ManageCustomerView;
-import views.ManageRouteView;
-import views.ManageSeatView;
+import model.*;
+import utils.*;
+import views.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -21,22 +18,66 @@ public class TicketService {
     private CustomerService customerService;
     private ManageRouteView manageRouteView;
     private RouteService routeService;
+    private ManageTrainView manageTrainView;
+    private TrainService trainService;
+    private ManageTicketView manageTicketView;
+    private Date currentDateIncludeHour;
     public TicketService(List<Ticket> ticketList){
         this.ticketList = ticketList;
         manageSeatView = new ManageSeatView();
         manageCustomerView = new ManageCustomerView();
         manageRouteView = new ManageRouteView();
+        manageTrainView = new ManageTrainView();
         seatService = new SeatService(manageSeatView.getSeatList());
         customerService = new CustomerService(manageCustomerView.getCustomerList());
         routeService = new RouteService(manageRouteView.getRouteList());
+        trainService = new TrainService(manageTrainView.getTrainList());
+        currentDateIncludeHour = DateUtils.getCurrentDateIncludeHour();
     }
     public void showTicketList(List<Ticket> ticketList){
 //        ID vé,	ID ghế,	ID Khách hàng,	Giá (giá vé chuyến đi + giá giảm loại KH),	trạng thái thanh toán
-        System.out.printf("%-10s %-15s %-15s %-20s %-25s\n","ID vé","ID ghế","ID Khách hàng","Giá vé","Trạng thái thanh toán");
+        System.out.printf("%-6s %-10s %-10s %-15s %-15s %-25s %-20s %-10s %-15s %-10s %-25s\n","ID vé",
+                "Tàu hiệu","Toa số","Điểm xuất phát",
+                "Điểm đến","Ngày khởi hành dự kiến","Ngày đến dự kiến"
+                ,"ID ghế","Khách hàng","Giá vé","Trạng thái thanh toán");
         for (Ticket ticket: ticketList){
-            System.out.printf("%-10s %-15s %-15s %-20s %-25s\n",
-                    ticket.getTicketId(),ticket.getSeatId(),ticket.getCustomerId(),ticket.getPrice(),
-                    ticket.isPaid()? PaintUtils.setOrange("Đã thanh toán"):"Chưa thanh toán");
+            if (ticket.isPaid()){
+                Customer customer = customerService.getCustomerByCustomerID(ticket.getCustomerId());
+                Seat seat = seatService.getSeatBySeatId(ticket.getSeatId());
+                Train train = trainService.getTrainByTrainId(seat.getTrainId());
+                Route route = routeService.getRouteById(seat.getRouteId());
+
+                System.out.printf("%-6s %-10s %-10s %-15s %-15s %-25s %-20s %-10s %-15s %-10s %-25s\n",
+                        ticket.getTicketId(),
+                        train.getTrainNumber(),seat.getCarId(),route.getFrom().getName(),route.getDestination().getName(),
+                        DateUtils.format(route.getDepartTime()),DateUtils.format(route.getRouteArriveDate()),
+                        ticket.getSeatId(),
+                        customer.getName(),
+                        CurrencyUtils.getViCurrency(ticket.getPrice()),
+                        ticket.isPaid()? PaintUtils.setGreen("Đã thanh toán"):PaintUtils.setOrange("Chưa thanh toán"));
+            }
+        }
+
+        System.out.println();
+        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.println();
+
+        for (Ticket ticket: ticketList){
+            if (!ticket.isPaid()){
+                Customer customer = customerService.getCustomerByCustomerID(ticket.getCustomerId());
+                Seat seat = seatService.getSeatBySeatId(ticket.getSeatId());
+                Train train = trainService.getTrainByTrainId(seat.getTrainId());
+                Route route = routeService.getRouteById(seat.getRouteId());
+
+                System.out.printf("%-6s %-10s %-10s %-15s %-15s %-25s %-20s %-10s %-15s %-10s %-25s\n",
+                        ticket.getTicketId(),
+                        train.getTrainNumber(),seat.getCarId(),route.getFrom().getName(),route.getDestination().getName(),
+                        DateUtils.format(route.getDepartTime()),DateUtils.format(route.getRouteArriveDate()),
+                        ticket.getSeatId(),
+                        customer.getName(),
+                        ticket.getPrice(),
+                        ticket.isPaid()? PaintUtils.setGreen("Đã thanh toán"):PaintUtils.setOrange("Chưa thanh toán"));
+            }
         }
     }
     public List<Ticket> getTicketListByCustomerId(int customerID){
@@ -47,6 +88,16 @@ public class TicketService {
             }
         }
         return ticketListByCustomerId;
+    }
+    public List<Ticket> getTicketListByStatus(boolean isPaid, List<Ticket> list){
+        List<Ticket> ticketListByStatus = new ArrayList<>();
+        for (Ticket ticket:list){
+            if (ticket.isPaid() == isPaid){
+                ticketListByStatus.add(ticket);
+            }
+        }
+
+        return ticketListByStatus;
     }
     public int getTicketIndexByTicketId(int ticketID, List<Ticket> list){
         for (int i = 0; i < list.size();i++){
@@ -84,7 +135,7 @@ public class TicketService {
         boolean isInvalidCustomerId;
         int customerId;
 
-        customerService.showCustomerList(manageCustomerView.getCustomerList());
+        customerService.showCustomerList();
 
         do {
             isInvalidCustomerId = false;
@@ -108,9 +159,29 @@ public class TicketService {
     }
     public Ticket createTicket(int customerID){
         int newId = getNewTicketId();
-        String seatId = seatService.getInputSeatId();
+        String seatId;
+
+        boolean isInvalidSeat;
+        do {
+            isInvalidSeat = false;
+            seatId = seatService.getInputSeatId();
+
+            Seat seat = seatService.getSeatBySeatId(seatId);
+            Route route = routeService.getRouteById(seat.getRouteId());
+
+            if (!seat.isEmpty()){
+                System.out.println("Ghế đã được đặt. Xin chọn ghế khác");
+                isInvalidSeat = true;
+            }else {
+                if (route.getDepartTime().before(currentDateIncludeHour)){
+                    System.out.println("Chuyến đi đã khởi hành. Xin vui lòng chọn chuyến khác");
+                    isInvalidSeat = true;
+                }
+            }
+        }while (isInvalidSeat);
+
         double price = routeService.getRouteById(seatService.getSeatBySeatId(seatId).getRouteId()).getPrice()
                 +customerService.getCustomerByCustomerID(customerID).geteCustomerType().getDiscountPrice();
-        return new Ticket(getNewTicketId(),seatId,customerID,price,false);
+        return new Ticket(newId,seatId,customerID,price,false);
     }
 }

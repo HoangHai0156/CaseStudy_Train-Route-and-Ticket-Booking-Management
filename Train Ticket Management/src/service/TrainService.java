@@ -1,6 +1,6 @@
 package service;
 
-import Comparator.TrainComparator;
+import comparator.TrainComparator;
 import model.ETrainProvider;
 import model.Train;
 import utils.ActionUtils;
@@ -68,7 +68,7 @@ public class TrainService {
         }
         return -1;
     }
-    public Train getTrainByTrainId(){
+    public Train getTrainByInputTrainId(){
         int trainId;
         boolean isTrainIdInvalid;
 
@@ -82,6 +82,9 @@ public class TrainService {
             }
         }while (isTrainIdInvalid);
 
+        return trainList.get(getTrainIndexByID(trainId));
+    }
+    public Train getTrainByTrainId(int trainId){
         return trainList.get(getTrainIndexByID(trainId));
     }
     public String getInputTrainNumber(){

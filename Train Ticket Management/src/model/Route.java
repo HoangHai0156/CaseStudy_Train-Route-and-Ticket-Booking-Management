@@ -1,6 +1,5 @@
 package model;
 
-import service.RouteService;
 import utils.DateUtils;
 
 import java.util.Date;
@@ -109,7 +108,7 @@ public class Route implements Imodel<Route>{
         String[] strings = line.split(",");
         this.routeId = Integer.parseInt(strings[0]);
         this.trainId = Integer.parseInt(strings[1]);
-        this.departTime = DateUtils.parse(strings[2]);
+        this.departTime = DateUtils.parseDateWithHour(strings[2]);
         this.runTime = Double.parseDouble(strings[3]);
         this.routeType = ERouteType.getERouTypeByName(strings[4]);
         this.from = EStation.getEStationByName(strings[5]);

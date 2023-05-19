@@ -1,1 +1,6 @@
-1,Quang,ADULT
+1,Quang,quang123,Quang123!,12/12/1989,34,ADULT,CLIENT
+2,Admin,admin,Admin123!,17/05/1999,24,ADULT,ADMIN
+3,Thong Nhat,nhat123,Nhat123!,04/10/2010,13,KID,CLIENT
+4,Nguyen Hoang,nguyen123,Nguyen123!,30/04/1975,48,ADULT,CLIENT
+5,Phuoc Duong,phuoc123,Phuoc123!,02/09/1945,78,OLD,CLIENT
+6,Hoang Hai,hoanghai123,Hoanghai123!,04/10/1999,24,ADULT,CLIENT

@@ -6,13 +6,10 @@ import model.Train;
 import service.RouteService;
 import service.TrainService;
 import utils.ActionUtils;
-import utils.DateUtils;
 import utils.FileUtils;
 import utils.PaintUtils;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.PrimitiveIterator;
 import java.util.Scanner;
 
 public class ManageTrainView {
@@ -137,7 +134,7 @@ public class ManageTrainView {
             }while (findTrainAction < 0 || findTrainAction > 4);
             switch (findTrainAction) {
                 case 1 -> {
-                    Train train = trainService.getTrainByTrainId();
+                    Train train = trainService.getTrainByInputTrainId();
                     showSingleTrain(train);
                 }
                 case 2 -> searchTrainByTrainNumber();
@@ -180,7 +177,7 @@ public class ManageTrainView {
 
     private void removeTrainView() {
         System.out.println(PaintUtils.setBlue("Xóa tàu khỏi danh sách tàu..."));
-        Train trainRemove = trainService.getTrainByTrainId();
+        Train trainRemove = trainService.getTrainByInputTrainId();
         List<Route> routeList = manageRouteView.getRouteList();
 
         // xóa những chuyến tàu có sử dụng con tàu đang bị xóa
@@ -208,7 +205,7 @@ public class ManageTrainView {
 
     private void editTrainView() {
         System.out.println(PaintUtils.setBlue("Chỉnh sửa thông tin tàu"));
-        Train trainEdit = trainService.getTrainByTrainId();
+        Train trainEdit = trainService.getTrainByInputTrainId();
         boolean continueCheck = true;
 
         do {

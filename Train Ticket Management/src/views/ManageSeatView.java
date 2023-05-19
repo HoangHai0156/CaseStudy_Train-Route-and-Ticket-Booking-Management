@@ -71,7 +71,9 @@ public class ManageSeatView {
         }while (continueCheck);
     }
 
-    private void showSeatListByRoute() {
+    protected void showSeatListByRoute() {
+        manageRouteView = new ManageRouteView();
+        seatList = FileUtils.readDataFromFile(Seat.class,seatFilePath);
         routeService = new RouteService(manageRouteView.getRouteList());
         seatService = new SeatService(getSeatList());
         manageRouteView.showRouteList(manageRouteView.getRouteList());
@@ -129,8 +131,8 @@ public class ManageSeatView {
             }
         }
 
-        ticketService.showTicketList(updateTicketList);
-        seatService.showSeatList(seatListUpdate);
+//        ticketService.showTicketList(updateTicketList);
+//        seatService.showSeatList(seatListUpdate);
         FileUtils.writeDataToFile(updateTicketList,manageTicketView.getTicketFilePath());
         FileUtils.writeDataToFile(seatListUpdate,seatFilePath);
     }

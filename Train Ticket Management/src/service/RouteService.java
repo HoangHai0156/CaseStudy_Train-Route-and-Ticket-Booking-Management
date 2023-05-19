@@ -1,6 +1,6 @@
 package service;
 
-import Comparator.RouteComparator;
+import comparator.RouteComparator;
 import model.ERouteType;
 import model.EStation;
 import model.Route;
@@ -15,13 +15,15 @@ import java.util.Scanner;
 public class RouteService {
     public static Scanner scanner = new Scanner(System.in);
     private List<Route> routeList;
-    public static ManageTrainView manageTrainView;
-    public static TrainService trainService;
+    private static ManageTrainView manageTrainView;
+    private static TrainService trainService;
+    private static Date currentDateIncludeHour;
 
     public RouteService(List<Route> routeList) {
         this.routeList = routeList;
         manageTrainView = new ManageTrainView();
         trainService = new TrainService(manageTrainView.getTrainList());
+        currentDateIncludeHour = DateUtils.getCurrentDateIncludeHour();
     }
 
     public Route getRouteById(int id) {
@@ -274,9 +276,14 @@ public class RouteService {
             if (!ValidateUtils.dateWithHourValidate(newDateStr)) {
                 System.out.println("Thời gian nhập vào không đúng định dạng. Hãy nhập lại");
                 checkInvalidate = true;
+            }else {
+                if (DateUtils.parseDateWithHour(newDateStr).before(currentDateIncludeHour)){
+                    System.out.println("Thời gian khởi hành không thể trước ngày hôm nay. Xin nhập lại");
+                    checkInvalidate = true;
+                }
             }
         } while (checkInvalidate);
-        return DateUtils.parse(newDateStr);
+        return DateUtils.parseDateWithHour(newDateStr);
     }
 
     public boolean checkConflictDepartDate(Date departDate, int trainID, int routeId,EStation from, EStation destination) {

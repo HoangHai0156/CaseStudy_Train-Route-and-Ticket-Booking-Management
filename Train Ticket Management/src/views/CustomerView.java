@@ -1,16 +1,31 @@
 package views;
 
+import model.Customer;
+import service.CustomerService;
+import service.RouteService;
+import service.SeatService;
+import service.TicketService;
 import utils.ActionUtils;
 import utils.PaintUtils;
 
 import java.util.Scanner;
 
 public class CustomerView {
-    public static Scanner scanner = new Scanner(System.in);
-    public CustomerView(){
-
+    public Scanner scanner = new Scanner(System.in);
+    private Customer customer;
+    private ManageRouteView manageRouteView;
+    private RouteService routeService;
+    private ManageSeatView manageSeatView;
+    private SeatService seatService;
+    private ManageTicketView manageTicketView;
+    private TicketService ticketService;
+    private ManageCustomerView manageCustomerView;
+    private CustomerService customerService;
+    public CustomerView(Customer customer){
+        this.customer = customer;
     }
     public void launcher(){
+
         boolean continueCheck = true;
 
         do {
@@ -33,7 +48,44 @@ public class CustomerView {
 
                 userAction = ActionUtils.intHandleInput("option");
             }while (userAction < 0 || userAction > 8);
+
+            manageRouteView = new ManageRouteView();
+            manageSeatView = new ManageSeatView();
+            manageTicketView = new ManageTicketView();
+            manageCustomerView = new ManageCustomerView();
+
+            routeService = new RouteService(manageRouteView.getRouteList());
+            seatService = new SeatService(manageSeatView.getSeatList());
+            ticketService = new TicketService(manageTicketView.getTicketList());
+            customerService = new CustomerService(manageCustomerView.getCustomerList());
+
             switch (userAction){
+                case 1:
+                    manageRouteView.showRouteList(manageRouteView.getRouteList());
+                    break;
+                case 2:
+                    manageRouteView.findRouteView();
+                    break;
+                case 3:
+                    manageSeatView.showSeatListByRoute();
+                    break;
+                case 4:
+                    manageTicketView.bookingTicketView(customer.getCustomerId());
+                    manageSeatView.updateSeatList();
+                    break;
+                case 5:
+                    ticketService.showTicketList(ticketService.getTicketListByCustomerId(customer.getCustomerId()));
+                    break;
+                case 6:
+                    manageTicketView.cancelTicketView(ticketService.getTicketListByCustomerId(customer.getCustomerId()));
+                    manageSeatView.updateSeatList();
+                    break;
+                case 7:
+                    manageTicketView.setPaidForCustomerTickets(customer.getCustomerId());
+                    break;
+                case 8:
+                    manageCustomerView.editCustomerById(customer.getCustomerId());
+                    break;
                 case 0:
                     continueCheck = false;
                     break;

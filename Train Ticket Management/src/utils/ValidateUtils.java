@@ -29,4 +29,22 @@ public class ValidateUtils {
         Matcher matcher = pattern.matcher(seatId);
         return matcher.matches();
     }
+    public static boolean customerNameValidate(String customerName){
+        REGEX = "^[a-zA-Z\\s]+$";
+        Pattern pattern = Pattern.compile(REGEX);
+        Matcher matcher = pattern.matcher(customerName);
+        return matcher.matches();
+    }
+    public static boolean userameValidate(String userame){
+        REGEX = "^(?!.*\\.\\.)(?!.*\\.$)[^\\W][\\w.]{0,29}$";
+        Pattern pattern = Pattern.compile(REGEX);
+        Matcher matcher = pattern.matcher(userame);
+        return matcher.matches();
+    }
+    public static boolean passwordValidate(String password){
+        REGEX = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$";
+        Pattern pattern = Pattern.compile(REGEX);
+        Matcher matcher = pattern.matcher(password);
+        return matcher.matches();
+    }
 }
