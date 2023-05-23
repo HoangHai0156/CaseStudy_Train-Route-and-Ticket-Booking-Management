@@ -18,7 +18,7 @@ public class ManageTicketView {
     private static ManageSeatView manageSeatView;
     private static SeatService seatService;
     private final String ticketFilePath = "./Data/ticket.csv";
-    private final int limitUnpaidTicket = 20;
+    private final int limitUnpaidTicket = 5;
 
     public ManageTicketView() {
         ticketList = FileUtils.readDataFromFile(Ticket.class, ticketFilePath);
@@ -159,7 +159,7 @@ public class ManageTicketView {
         if (ticketCancel.isPaid()) {
             System.out.println(PaintUtils.setRed("Vé đã được thanh toán. Không thể hủy đặt"));
         } else {
-            int ticketIndex = ticketService.getTicketIndexByTicketId(cancelTicketID, list);
+            int ticketIndex = ticketService.getTicketIndexByTicketId(cancelTicketID, ticketList);
             ticketList.remove(ticketIndex);
             FileUtils.writeDataToFile(ticketList, ticketFilePath);
         }

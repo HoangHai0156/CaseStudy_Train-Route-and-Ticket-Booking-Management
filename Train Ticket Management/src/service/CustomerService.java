@@ -123,7 +123,7 @@ public class CustomerService {
             System.out.println("Nhập password: ");
             password = scanner.nextLine();
             if (!ValidateUtils.passwordValidate(password)){
-                System.out.println("Password phải chứa it nhất 1 chữ viết hoa, 1 chữ thường, 1 ký tự số, 1 Ký tự đặc biệt. Xin nhập lại");
+                System.out.println("Password phải chứa it nhất 1 chữ viết hoa, 1 chữ thường, 1 ký tự số. Xin nhập lại");
                 isInvalidPassword = true;
             }
         }while (isInvalidPassword);
